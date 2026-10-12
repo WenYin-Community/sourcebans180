@@ -176,6 +176,7 @@ UPDATE `sb_admins` SET `gid` = 0, `extraflags` = 256, `srv_group` = '服务器�
 - **登录流程**：`init.php` 在 `Auth::init()` 后调用 `WyAuthHandler::bootstrap()` —— 本地未登录且持有认证中心 `wy_auth` 票据时静默兑换（HMAC-SHA256 签名调中心 `api.php action=ticket`），成功即 `Auth::login()` 建本地 JWT 会话，并 302 重载一次使其生效（GET；POST 不重载防丢数据）。兑换失败按票据值负缓存 5 分钟（`sbpp_wyauth_neg` Cookie，含 `not_open`/`api_down` 原因），登录页据此显示提示。
 - **账号绑定**：按 `sb_admins.user` 唯一匹配（排除 `aid=0`/CONSOLE）；未命中**自动建号** —— `gid=0`、`extraflags=-33522432`（0xFE007D00）、`srv_group='服务器管理'`、写 `sb_admins_servers_groups` 关联全部服务器、随机本地密码（不可本地登录）。该配置与存量服务器管理账号逐字段一致，**调整前先读「权限模型」**。
 - **入口收敛**（开关开启时）：本地登录表单、找回密码页及其 xajax 端点（`Plogin`/`LostPassword`）一并关闭；登出清本地会话后 302 中心 `logout.php`（全域登出）。
+- **登录态对齐**：SSO 会话签发时把中心票据指纹写入 JWT claim `wyt`（`Auth::login` 第 3 参），每次请求比对 —— 票据未变零开销；中心换号→自动切换本地账号（GET 重载一次）；中心登出/票据失效/准入被撤→本地登出并 302 中心；中心不可达→保持现状（降级）。无 `wyt` 的会话为本地密码登录，不受中心登录态影响（对齐 BBS/禅道单点登出一致性语义）。
 - **运维**：`WYAUTH_*` 仅存 `config.php`（不入库），模板见 `config.php.template`；改模板后清 `templates_c/`；应急回退 = 开关置 `false`。
 - ⚠️ 新增任何绕过 SSO 的本地登录入口前必须与主人确认。
 

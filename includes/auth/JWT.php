@@ -13,20 +13,26 @@ use Psr\Clock\ClockInterface;
 
 class JWT
 {
-    public static function create(string $jti, int $maxLife, int $aid): Token\Plain
+    public static function create(string $jti, int $maxLife, int $aid, string $wyt = ''): Token\Plain
     {
         $config = static::getConfig();
         $date = new DateTimeImmutable();
 
-        return $config->builder()
+        $builder = $config->builder()
             ->identifiedBy($jti)
             ->issuedBy(Host::domain())
             ->permittedFor(Host::domain())
             ->canOnlyBeUsedAfter($date)
             ->issuedAt($date)
             ->expiresAt($date->setTimestamp($date->getTimestamp() + $maxLife))
-            ->withClaim('aid', $aid)
-            ->getToken($config->signer(), $config->signingKey());
+            ->withClaim('aid', $aid);
+
+        // 统一认证会话：记录签发时的中心票据指纹（sha256），供后续请求持续比对中心登录态
+        if ($wyt !== '') {
+            $builder = $builder->withClaim('wyt', $wyt);
+        }
+
+        return $builder->getToken($config->signer(), $config->signingKey());
     }
 
     public static function parse(string $jwt): Token

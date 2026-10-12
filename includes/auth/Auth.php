@@ -24,12 +24,13 @@ class Auth
     /**
      * @param int $aid
      * @param int $maxlife
+     * @param string $wyt 统一认证票据指纹（SSO 会话专用，随 JWT 签发并用于登录态持续比对）
      */
-    public static function login(int $aid, int $maxlife): void
+    public static function login(int $aid, int $maxlife, string $wyt = ''): void
     {
         $jti = self::generateJTI();
 
-        $token = JWT::create($jti, $maxlife, $aid);
+        $token = JWT::create($jti, $maxlife, $aid, $wyt);
         self::updateLastVisit($aid);
 
         // 将 jti 落库，使 logout() 能够作废该令牌。

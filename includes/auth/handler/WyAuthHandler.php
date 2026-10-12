@@ -5,13 +5,17 @@ if (!defined('IN_SB')) {
     die();
 }
 
+use Lcobucci\JWT\Token;
+
 /**
  * 玟茵社区统一认证（wenyinos 认证中心）接入处理器。
  *
- * bootstrap() 在 init.php 早期调用：本地未登录且持有 wy_auth 跨域票据时静默兑换，
- * 兑换通过即代表该账号已在中心开通本应用准入 → 建本地 JWT 会话并重载一次使 Cookie 生效。
- * 账号绑定以 username 唯一匹配（排除 CONSOLE/aid=0）；未命中自动建号（服务器管理组配置）。
- * 兑换失败按票据值写入 5 分钟负缓存 Cookie，防止无准入用户浏览公开页时的 API 风暴。
+ * bootstrap() 在 init.php 早期调用：
+ * - 本地未登录且持有 wy_auth 跨域票据时静默兑换，成功即建本地会话（JWT 携带票据指纹 claim wyt）；
+ * - 本地已登录的 SSO 会话每次请求与中心登录态比对（指纹存于 JWT，与会话同生共死）：
+ *   票据未变零开销；中心换号→重兑并按需切换本地账号；中心登出/票据失效→本地登出并回中心；
+ *   中心不可达→保持现状静默降级（对齐 BBS/禅道单点登出一致性语义）。
+ * - 无 wyt 指纹的会话为本地密码登录，不受中心登录态影响。
  */
 class WyAuthHandler
 {
@@ -23,11 +27,15 @@ class WyAuthHandler
         if (!defined('WYAUTH_ENABLED') || !WYAUTH_ENABLED) {
             return;
         }
-        if (Auth::verify() !== null) {
+
+        $ticket = self::ticketFromCookie();
+        $token = Auth::verify();
+
+        if ($token !== null) {
+            self::syncLoggedIn($token, $ticket);
             return;
         }
 
-        $ticket = self::ticketFromCookie();
         if ($ticket === '' || self::negativeCacheHit($ticket)) {
             return;
         }
@@ -42,22 +50,76 @@ class WyAuthHandler
             return;
         }
 
-        $payload = is_array($resp['data'] ?? null) ? $resp['data'] : [];
-        $aid = self::findOrProvision($payload);
+        $aid = self::findOrProvision(is_array($resp['data'] ?? null) ? $resp['data'] : []);
         if ($aid <= 0) {
             self::markNegative($ticket, 'provision_fail');
             return;
         }
 
         self::clearNegative();
-        $maxlife = intval(Config::get('auth.maxlife')) * 60;
-        Auth::login($aid, $maxlife > 0 ? $maxlife : 86400);
+        self::login($aid, $ticket);
+    }
 
-        // Auth::login 设置的 Cookie 本请求内不可见，GET 请求重载一次使其生效（POST 不重载防丢数据）
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && !isset($_GET['_wy'])) {
+    // 已登录会话与中心票据持续比对：换号即同步、中心登出即掉线、中心不可达静默降级
+    private static function syncLoggedIn(Token $token, string $ticket): void
+    {
+        $recorded = (string)($token->claims()->get('wyt') ?? '');
+        if ($recorded === '') {
+            return;
+        }
+
+        if ($ticket !== '' && hash_equals($recorded, hash('sha256', $ticket))) {
+            return;
+        }
+
+        if ($ticket === '') {
+            self::forceLogout();
+            return;
+        }
+
+        if (self::negativeCacheHit($ticket)) {
+            return;
+        }
+
+        $resp = self::exchange($ticket);
+        if ($resp === null) {
+            self::markNegative($ticket, 'api_down');
+            return;
+        }
+        if (intval($resp['code'] ?? -1) !== 0) {
+            self::markNegative($ticket, intval($resp['code'] ?? 0) === 1004 ? 'not_open' : 'invalid');
+            self::forceLogout();
+            return;
+        }
+
+        $aid = self::findOrProvision(is_array($resp['data'] ?? null) ? $resp['data'] : []);
+        if ($aid <= 0) {
+            self::markNegative($ticket, 'provision_fail');
+            return;
+        }
+
+        self::clearNegative();
+        self::login($aid, $ticket, $aid !== (int)$token->claims()->get('aid'));
+    }
+
+    // 建/续本地会话；$reload 仅在身份变化（切换账号）时为 true——Cookie 本请求内不可见，需重载生效
+    private static function login(int $aid, string $ticket, bool $reload = true): void
+    {
+        $maxlife = intval(Config::get('auth.maxlife')) * 60;
+        Auth::login($aid, $maxlife > 0 ? $maxlife : 86400, hash('sha256', $ticket));
+
+        if ($reload && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && !isset($_GET['_wy'])) {
             header('Location: ' . self::reloadUrl());
             exit();
         }
+    }
+
+    // 中心态已失效（登出/票据无效/未开通）：清本地会话并回中心
+    private static function forceLogout(): void
+    {
+        Auth::logout();
+        header('Location: ' . rtrim(dirname(WYAUTH_LOGIN), '/') . '/login.php');
+        exit();
     }
 
     // login/lostpassword 页展示状态：guide=正常引导 / not_open=未开通 / api_down=服务不可用
