@@ -50,6 +50,39 @@ class JWT
 
     private static function getConfig(): Configuration
     {
-        return Configuration::forSymmetricSigner(new Sha256(), InMemory::base64Encoded(SB_SECRET_KEY));
+        return Configuration::forSymmetricSigner(new Sha256(), InMemory::base64Encoded(static::validateSecretKey()));
+    }
+
+    /**
+     * 校验 JWT 密钥并返回原始 Base64 字符串。
+     *
+     * InMemory::base64Encoded() 接收的是 **Base64 字符串**（它内部会再解码一次），
+     * 所以这里只做校验、不改写返回值。它对非法 Base64 的行为是静默截断，会让
+     * "配置写错" 和 "密钥被轮换/篡改" 都表现为签名验证失败，难以定位；显式校验
+     * 可以让配置错误在第一次签发/验证时就带着明确信息炸出来。
+     */
+    private static function validateSecretKey(): string
+    {
+        if (!defined('SB_SECRET_KEY') || SB_SECRET_KEY === '') {
+            throw new RuntimeException(
+                'JWT 密钥未配置：请在 config.php 中设置 SB_SECRET_KEY（可访问 upgrade.php 自动生成）。'
+            );
+        }
+
+        $key = base64_decode(SB_SECRET_KEY, true);
+
+        if ($key === false) {
+            throw new RuntimeException(
+                'JWT 密钥非法：SB_SECRET_KEY 必须是合法的 Base64 字符串，请检查 config.php。'
+            );
+        }
+
+        if (strlen($key) < 32) {
+            throw new RuntimeException(
+                'JWT 密钥过弱：SB_SECRET_KEY 解码后至少需要 32 字节，当前为 '.strlen($key).' 字节。'
+            );
+        }
+
+        return SB_SECRET_KEY;
     }
 }
