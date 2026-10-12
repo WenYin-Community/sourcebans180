@@ -142,8 +142,8 @@ $theme->assign('xajax_functions', $xajax->printJavascript("../scripts", "xajax.j
 $theme->assign('check', $_GET["check"]); // steamid or ip address
 $theme->assign('type', $_GET['type']);
 
-$theme->left_delimiter  = "-{";
-$theme->right_delimiter = "}-";
+$theme->setLeftDelimiter("-{");
+$theme->setRightDelimiter("}-");
 $theme->display('page_kickit.tpl');
-$theme->left_delimiter  = "{";
-$theme->right_delimiter = "}";
+$theme->setLeftDelimiter("{");
+$theme->setRightDelimiter("}");

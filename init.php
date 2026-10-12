@@ -1,4 +1,6 @@
 <?php
+use Smarty\Smarty;
+
 /*************************************************************************
 This file is part of SourceBans++
 
@@ -198,6 +200,7 @@ $theme->use_sub_dirs = false;
 $theme->compile_id = $theme_name;
 $theme->setCaching(Smarty::CACHING_OFF);
 $theme->setTemplateDir(SB_THEMES . $theme_name);
+$theme->setCompileDir(ROOT . 'templates_c/');
 $theme->setCacheDir(SB_CACHE);
 $theme->registerPlugin(Smarty::PLUGIN_FUNCTION, 'help_icon', 'smarty_function_help_icon');
 $theme->registerPlugin(Smarty::PLUGIN_FUNCTION, 'sb_button', 'smarty_function_sb_button');
