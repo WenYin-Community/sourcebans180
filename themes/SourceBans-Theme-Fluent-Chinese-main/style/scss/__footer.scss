@@ -1,5 +1,7 @@
 .footer {
     background-color: var(--box--backgroundColor);
+    border-top: 1px solid var(--border--color);
+    color: var(--theme-text_light);
 
     > .layout_container {
         padding: 20px 15px;
@@ -7,5 +9,6 @@
 
     a {
         font-weight: bold;
+        color: var(--brand--base);
     }
 }

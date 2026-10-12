@@ -1,28 +1,84 @@
 [data-theme='dark'] {
     &:root {
-        --theme-background: #0f1015;
-        --theme-text: #efefef;
-        --theme-text_light: #bdbdbd;
+        /* 深色模式：底色偏向玟茵深紫而非纯黑 */
+        --theme-background: #14101f;
+        --theme-text: #ece7f5;
+        --theme-text_light: #a99cc4;
         --theme-text_light-hover: #fff;
-        --theme-area_background_light: #171821;
-        --button--background-hover: rgba(255, 255, 255, 0.08);
+        --theme-area_background_light: #1d1730;
+        --button--background-hover: rgba(255, 255, 255, 0.1);
 
-        --button-light: #22242f;
-        --button-light-text: #fff;
+        --brand--tint: #1d1730;
+        --brand--tint-2: #1a1528;
+        --brand--tint-3: #241c3d;
 
-        --box--backgroundColor: #13141b;
-        --box-shadow: none;
-        --box-shadow--child: 0 0 0 1px rgba(147, 161, 181, 0.2), 0 0 40px 0 transparent;
+        --button-light: #241c3d;
+        --button-light-text: #d9cff0;
 
-        --backdrop-background: rgba(19, 20, 27, 0.65);
-        --backdrop-text_color: #fff;
-        --input--desc: #98a3ad;
-        --input-disabled: #3e4050;
+        --box--backgroundColor: #1a1528;
+        --border--color: #302748;
+        --box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+        --box-shadow--child: 0 0 0 1px var(--border--color), 0 4px 24px rgba(0, 0, 0, 0.35);
 
-        --line-hr: rgba(255, 255, 255, 0.1);
+        --backdrop-background: rgba(26, 21, 40, 0.78);
+        --backdrop-text_color: #ece7f5;
+        --input--desc: #a99cc4;
+        --input--border: #302748;
+        --input-disabled: #241c3d;
+
+        --line-hr: #302748;
+
+        --theme-link: #a98fe8;
+
+        /* 状态色在深底上提亮，保证可读性 */
+        --table-unbanned-code: 72, 187, 142;
+        --table-banned-code: 245, 158, 74;
+        --table-permanent-code: 248, 113, 113;
+        --message-error: #f87171;
+        --message-succes: #4ade80;
+        --button-important: #dc2626;
+        --button-success: #16a34a;
     }
 
     .layout_topBar .layout_topBar_action li #user_action_change_dark i {
         color: #ffe200;
+    }
+
+    /* 主色在深底上需要提亮，否则对比度不足 */
+    a {
+        color: var(--theme-link);
+    }
+
+    /* 旧版表格样式强制了浅底黑字，深色下需覆盖 */
+    table.listtable2,
+    table.listtable3 {
+        color: var(--theme-text);
+        border-color: var(--border--color);
+    }
+
+    td.listtable_2 {
+        background-color: var(--brand--tint-2);
+        border-color: var(--border--color);
+        color: var(--theme-text);
+    }
+
+    .activeplayer {
+        background-color: var(--brand--tint-2);
+        border-color: var(--border--color);
+    }
+
+    #current-theme-holder,
+    #cpanel {
+        background-color: var(--brand--tint-2);
+    }
+
+    #theme-list ul li a {
+        border-left-color: var(--border--color);
+    }
+
+    #theme-list ul .active,
+    #theme-list ul li a:hover,
+    .ban-edit ul li a:hover {
+        color: var(--theme-text);
     }
 }

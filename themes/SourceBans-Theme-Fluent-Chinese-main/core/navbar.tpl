@@ -1,7 +1,27 @@
 <main>
   <div class="layout_topBar">
-    <div class="layout_container flex flex-jc:end flex-ai:center">
-      <ul class="SocialMedia layout_topBar_action flex">
+    <div class="layout_container flex flex-jc:space-between flex-ai:center">
+      <a href="./index.php?p=home" class="layout_topBar_logo">
+        <img src="images/{$logo}" alt="SourceBans 标志" />
+      </a>
+
+      <div class="layout_topBar_search responsive_show:desktop">
+        {literal}
+          <form method="get" action="index.php">
+            <input type="hidden" name="p" value="banlist" />
+            <input class="searchbox" alt="搜索封禁" name="searchText" type="text" onfocus="this.value='';" onblur="if (this.value=='') {this.value=' 搜索封禁...';}" value=" 搜索封禁..." />
+            <input class="button_search" type="submit" name="Submit" value="搜索" />
+          </form>
+
+          <form method="get" action="index.php">
+            <input type="hidden" name="p" value="commslist" />
+            <input class="searchbox" alt="搜索禁言" name="searchText" type="text" onfocus="this.value='';" onblur="if (this.value=='') {this.value=' 搜索禁言...';}" value=" 搜索禁言... " />
+            <input class="button_search" type="submit" name="Submit" value="搜索" />
+          </form>
+        {/literal}
+      </div>
+
+      <ul class="SocialMedia layout_topBar_action flex flex-ai:center">
         <li>
           <button id="user_action_change_dark" aria-label="深色模式"><i class="fas fa-moon"></i></button>
         </li>
@@ -12,93 +32,25 @@
           <button aria-label="重置颜色"><i class="fa fa-refresh"></i></button>
         </li>
 
-<!-- Remove the comments balise if you to enable some SocialMedia Icons -->
-
-          <!-- ! Customized information -->
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://github.com/WenYin-Community/" rel="noopener" title="文印社区">
-              <i class="fa-brands fa-github fa-lg"></i>
+        <li class="responsive_show:desktop">
+          <a target="_blank" href="https://github.com/WenYin-Community/" rel="noopener" title="文印社区">
+            <i class="fa-brands fa-github fa-lg"></i>
           </a>
-          </li>
-
-
-        <!--
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://steamcommunity.com/groups/nide_css" rel="noopener" title="Our Steam Group">
-              <i class="fab fa-steam-symbol"></i>
-            </a>
-          </li>
-        -->
-
-        <!--
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://www.facebook.com/Steam" rel="noopener" data-ipstooltip="" _title="Follow us on Facebook">
-              <i class="fab fa-facebook"></i>
-            </a>
-          </li>
-        -->
-
-        <!--
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://twitter.com/aXen_1998" rel="noopener" data-ipstooltip="" _title="Follow us on Twitter">
-              <i class="fab fa-twitter"></i>
-            </a>
-          </li>
-        -->
-
-        <!--
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://www.instagram.com/zuck/" rel="noopener" data-ipstooltip="" _title="Follow us on Instagram">
-              <i class="fab fa-instagram"></i>
-            </a>
-          </li>
-        -->
-
-        <!--
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://www.twitch.tv/zevent" rel="noopener" data-ipstooltip="" _title="Follow us on Twitch">
-              <i class="fab fa-twitch"></i>
-            </a>
-          </li>
-        -->
-
-        <!--
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://discord.gg/XhByCBg" rel="noopener" data-ipstooltip="" _title="Join us on Discord">
-              <i class="fab fa-discord"></i>
-            </a>
-          </li>
-        -->
-
-        <!--
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://telegram.org/" rel="noopener" data-ipstooltip="" _title="Join us on Telegram">
-              <i class="fab fa-telegram"></i>
-            </a>
-          </li>
-        -->
-
-        <!--
-          <li class="responsive_show:desktop">
-            <a target="_blank" href="https://youtube.com/embed/dQw4w9WgXcQ?rel=0;&amp;autoplay=1" rel="noopener" data-ipstooltip="" _title="Follow us on YouTube">
-              <i class="fab fa-youtube"></i>
-            </a>
-          </li>
-        -->
+        </li>
       </ul>
 
       <ul class="layout_topBar_userBar responsive_show:desktop flex flex-ai:center">
         {if $login}
-          <li class="margin-right">
+          <li class="margin-right:half">
             欢迎，<a href='index.php?p=account'><i class="fas fa-user"></i> {$username}</a>
           </li>
           <li>
-            <a class="button button-important" href='index.php?p=logout'><i class="fas fa-sign-out-alt"></i>
+            <a class="button button-logout" href='index.php?p=logout'><i class="fas fa-sign-out-alt"></i>
               退出登录</a>
           </li>
         {else}
           <li>
-            <a class="button button-success" href='index.php?p=login'>登录</a>
+            <a class="button button-login" href='index.php?p=login'>登录</a>
           </li>
         {/if}
       </ul>

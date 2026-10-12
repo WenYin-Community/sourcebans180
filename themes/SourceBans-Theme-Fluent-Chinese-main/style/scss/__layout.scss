@@ -8,11 +8,12 @@
 
     &_box {
         box-shadow: var(--box-shadow);
+        border: 1px solid var(--border--color);
         border-radius: var(--border--radius);
         background-color: var(--box--backgroundColor);
 
         &_title {
-            background-color: var(--layout_main--color);
+            background: var(--brand--gradient);
             padding: 16px;
             border-top-left-radius: inherit;
             border-top-right-radius: inherit;
@@ -41,29 +42,34 @@
 
         &-child {
             box-shadow: var(--box-shadow--child);
-            border-radius: 4px;
+            border-radius: var(--border--radius);
         }
     }
 
     &_topBar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
+        /* 与 .header 合并为同一条紫色顶栏：不再单独悬浮，改为渐变底色 */
+        position: relative;
         z-index: 1000;
-        background-color: var(--backdrop-background);
-        backdrop-filter: var(--backdrop-filter-value);
-        color: var(--backdrop-text_color);
-        box-shadow: 0 0 40px 0 rgba(56, 55, 93, 0.3);
+        background: var(--brand--gradient);
+        color: #fff;
         padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 
         @media screen and (max-width: 980px) {
             padding: 0;
-            height: 50px;
+            height: 60px;
 
             > .layout_container {
                 padding: 0;
                 margin: 0;
+            }
+        }
+
+        a {
+            color: rgba(255, 255, 255, 0.9);
+
+            &:hover {
+                color: #fff;
             }
         }
 
@@ -85,14 +91,19 @@
                 button {
                     background: transparent !important;
                     padding: 0;
-                    color: var(--backdrop-text_color);
+                    color: #fff;
                     border: 0;
                     font-size: inherit;
                     width: 20px;
                     cursor: pointer;
+                    transition: opacity 0.2s ease;
 
                     @media screen and (max-width: 980px) {
                         @include mobile-button;
+                    }
+
+                    &:hover {
+                        opacity: 0.75;
                     }
 
                     &:focus {
@@ -112,6 +123,10 @@
 
         &_userBar {
             @include reset-list(0, 0);
+
+            li {
+                color: #fff;
+            }
         }
     }
 }

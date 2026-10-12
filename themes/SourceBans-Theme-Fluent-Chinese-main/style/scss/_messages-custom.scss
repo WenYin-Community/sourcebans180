@@ -1,0 +1,101 @@
+/* ================ Custom - Message type ================ */
+/* Messages: to give the user information, warnings etc. */
+/* ======================================================== */
+/* BASE */
+
+.cMargin_vertical,
+.cMargin_bottom {
+    margin-bottom: var(--sp-5) !important;
+}
+
+.cMessage,
+.cAnnouncement {
+    border-radius: var(--radius-3);
+    position: relative;
+    margin-bottom: var(--sp-3);
+    color: #fff;
+    border: 1px solid rgba(30, 16, 51, 0.12);
+    box-shadow: inset rgba(255, 255, 255, 0.12) 0px 1px 0px;
+}
+
+html[dir='ltr'] .cMessage {
+    padding: var(--sp-4) var(--sp-4) var(--sp-4) var(--sp-9);
+}
+
+html[dir='rtl'] .cMessage {
+    padding: var(--sp-4) var(--sp-9) var(--sp-4) var(--sp-4);
+}
+
+.cMessage:before {
+    font-family: 'Font Awesome 6 Free';
+    position: absolute;
+    top: var(--sp-4);
+    font-size: 20px;
+    line-height: 1;
+}
+
+html[dir='ltr'] .cMessage:before {
+    left: var(--sp-4);
+}
+
+html[dir='rtl'] .cMessage:before {
+    right: var(--sp-4);
+}
+
+.cMessage :not(.cButton) {
+    color: inherit;
+}
+
+.cMessage_title {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    margin-bottom: var(--sp-1);
+}
+
+.cMessage a.cButton {
+    margin-top: -5px;
+}
+
+html[dir] .cMessage .cButton_link {
+    border-color: currentColor;
+    color: #fff;
+    opacity: 0.7;
+}
+
+/* Styles a code displayed in some messages */
+.cMessage_code {
+    padding: 7px;
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-2);
+    margin-top: -7px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+html[dir='rtl'] .cMessage_code {
+    float: left;
+    margin-right: -7px;
+}
+
+/* More types */
+.cMessage_info,
+.cMessage_information {
+    background: var(--message-info);
+}
+
+.cMessage_general {
+    background: var(--message-general);
+}
+
+.cMessage_warning {
+    background: #e06d22;
+}
+
+.cMessage_success {
+    background: var(--message-succes);
+}
+
+.ban_list_comments_header .fa-trash {
+    color: var(--button-important);
+}

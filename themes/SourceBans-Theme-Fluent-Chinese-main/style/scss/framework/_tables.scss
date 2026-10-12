@@ -10,14 +10,17 @@
 
         thead,
         td.listtable_top {
-            background-color: var(--layout_main--color);
+            background-color: var(--brand--tint-2);
             font-weight: bold;
-            color: #fff;
+            color: var(--brand--deep);
+            border-bottom: 1px solid var(--border--color);
         }
 
         thead {
             th {
-                padding: 5px;
+                padding: 10px 8px;
+                font-size: 13px;
+                text-align: left;
             }
 
             th:first-child {
@@ -39,8 +42,12 @@
                 background-color: var(--layout_main--color_0_15);
             }
 
+            tr {
+                border-bottom: 1px solid var(--border--color);
+            }
+
             td {
-                padding: 5px;
+                padding: 8px 8px;
 
                 &:first-child img {
                     width: 16px;

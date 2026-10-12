@@ -5,8 +5,9 @@
     <script type="text/javascript" src="themes/{$theme}/scripts/initial.js"></script>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@600;700&display=swap"
         rel="stylesheet">
 
     <style id="colorTheme" type="text/css"></style>
@@ -14,11 +15,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{$title}</title>
     <link rel="Shortcut Icon" href="themes/{$theme}/images/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="themes/{$theme}/style/global.css?v05212021" />
-    <link rel="stylesheet" type="text/css" href="themes/{$theme}/style/global.css.map?v05212021" />
+    <link rel="stylesheet" type="text/css" href="themes/{$theme}/style/global.css?v20261012" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.1/css/all.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.1/css/v4-shims.css">
     <meta name="description" content="Sourcebans for website" />
+    <meta name="theme-color" content="#6f42c1" />
     <script type="text/javascript" src="themes/{$theme}/scripts/sourcebans.js"></script>
     <script type="text/javascript" src="./scripts/mootools.js"></script>
     <script type="text/javascript" src="./scripts/contextMenoo.js"></script>
@@ -26,27 +27,4 @@
 </head>
 
 <body>
-    <header class="header">
-        <div class="layout_container responsive_hide:mobile flex flex-jc:space-between flex-ai:center">
-			<div class="flex flex-fd:column text:left">
-				<a href="./index.php?p=home" class="header_logo">
-					<img src="images/{$logo}" alt="SourceBans 标志" />
-				</a>
-			</div>
-			<div class="flex flex-fd:column text:right responsive_show:desktop">
-            {literal}
-                    <form method="get" action="index.php">
-                        <input type="hidden" name="p" value="banlist" />
-                        <input class="searchbox" alt="搜索封禁" name="searchText" type="text" onfocus="this.value='';" onblur="if (this.value=='') {this.value=' 搜索封禁...';}" value=" 搜索封禁..." />
-                        <input class="button_search" type="submit" name="Submit" value="搜索" />
-                    </form>
-
-	                <form method="get" action="index.php">
-                        <input type="hidden" name="p" value="commslist" />
-                        <input class="searchbox" alt="搜索禁言" name="searchText" type="text" onfocus="this.value='';" onblur="if (this.value=='') {this.value=' 搜索禁言...';}" value=" 搜索禁言... " />
-                        <input class="button_search" type="submit" name="Submit" value="搜索" />
-                    </form>
-            {/literal}
-			</div>
-        </div>
-    </header>
+    <!-- 顶部栏（logo / 搜索 / 工具 / 登录状态）统一由 core/navbar.tpl 的 .layout_topBar 渲染 -->

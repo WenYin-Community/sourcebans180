@@ -2,6 +2,7 @@
     flex: 1;
     width: 100%;
     box-shadow: var(--box-shadow);
+    border: 1px solid var(--border--color);
     border-radius: var(--border--radius);
     background-color: var(--box--backgroundColor);
 
@@ -17,9 +18,9 @@
             align-items: center;
             justify-content: space-around;
             @include reset-list(0, 10px 10px 0 10px);
-            background-color: var(--layout_main--color);
+            background: var(--brand--gradient);
             border-radius: var(--border--radius) var(--border--radius) 0 0;
-            color: var(--theme-text);
+            color: #fff;
 
             li {
                 flex: 1;
@@ -29,11 +30,11 @@
                 &.active a {
                     background-color: var(--theme-area_background_light);
                     font-weight: bold;
-                    color: inherit;
+                    color: var(--brand--deep);
                 }
 
                 &:not(.active) a:hover {
-                    background-color: rgba(255, 255, 255, 0.15);
+                    background-color: rgba(255, 255, 255, 0.18);
                 }
 
                 a {

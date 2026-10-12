@@ -1,41 +1,56 @@
 :root {
-    --layout_main_code--color: 26, 122, 191;
+    /* ===== 主色：玟茵紫 ===== */
+    --layout_main_code--color: 111, 66, 193;
     --layout_main--color: rgb(var(--layout_main_code--color));
     --layout_main--color_0_3: rgba(var(--layout_main_code--color), 0.3);
     --layout_main--color_0_15: rgba(var(--layout_main_code--color), 0.15);
 
+    /* 紫色层次（取自 wenyinos.com 设计令牌） */
+    --brand--deepest: #1e1033;
+    --brand--deep: #3b2266;
+    --brand--mid: #4a2c82;
+    --brand--base: #6f42c1;
+    --brand--light: #8b5fd6;
+    --brand--gradient: linear-gradient(160deg, #4a2c82 0%, #6f42c1 50%, #8b5fd6 100%);
+    --brand--tint: #f8f4fc;
+    --brand--tint-2: #f6f2fa;
+    --brand--tint-3: #f3edf9;
+
     --container--width: 1630px;
     --header--height: 80px;
 
-    --theme-background: #edf0f4;
-    --theme-text: #353c41;
-    --theme-text_light: #464646;
-    --theme-text_light-hover: #000;
+    --theme-background: #fcfafd;
+    --theme-text: #3b2266;
+    --theme-text_light: #6b5b8a;
+    --theme-text_light-hover: #1e1033;
     --theme-link: var(--layout_main--color);
-    --theme-area_background_light: #f7fafc;
+    --theme-area_background_light: #f6f2fa;
 
-    --border--radius: 5px;
-    --box-shadow: 0 0 40px 0 rgba(94, 92, 154, 0.08);
-    --box-shadow--child: 0 0 0 1px rgba(76, 86, 101, 0.2), 0 0 40px 0 rgba(94, 92, 154, 0.08);
+    --border--radius: 8px;
+    --border--radius-pill: 46px;
+    --border--color: #e5ddf0;
+    --box-shadow: 0 4px 24px rgba(75, 44, 130, 0.06);
+    --box-shadow--child: 0 0 0 1px var(--border--color), 0 4px 24px rgba(75, 44, 130, 0.06);
     --box--backgroundColor: #fff;
 
     --backdrop-filter-value: blur(15px);
-    --backdrop-background: rgba(255, 255, 255, 0.65);
-    --backdrop-text_color: #000;
+    --backdrop-background: rgba(255, 255, 255, 0.72);
+    --backdrop-text_color: #3b2266;
 
-    --input--shadow: rgba(44, 95, 140, 0.08);
-    --input--border: rgba(113, 128, 150, 0.4);
+    --input--shadow: rgba(111, 66, 193, 0.08);
+    --input--border: #e5ddf0;
     --input--border-focusShadow: var(--layout_main--color_0_3) 0px 0px 0px 4px;
-    --input--desc: #6c757d;
-    --input-disabled: #e6e6e6;
+    --input--desc: #6b5b8a;
+    --input-disabled: #f3edf9;
 
-    --line-hr: rgba(0, 0, 0, 0.1);
+    --line-hr: #e5ddf0;
 
-    --button-success: #267b3c;
-    --button-important: #ca1e1e;
-    --button-light: #e8f2fa;
-    --button-light-text: #0e4c79;
-    --button--background-hover: rgba(0, 0, 0, 0.08);
+    --button-success: #2a884b;
+    --button-infos: #e06d22;
+    --button-important: #c53030;
+    --button-light: #f3edf9;
+    --button-light-text: #4a2c82;
+    --button--background-hover: rgba(30, 16, 51, 0.1);
 
     --table-unbanned-code: 44, 140, 105;
     --table-unbanned: rgba(var(--table-unbanned-code), 0.1);
@@ -47,15 +62,39 @@
     --table-permanent: rgba(var(--table-permanent-code), 0.1);
     --table-permanent-text: rgb(var(--table-permanent-code));
 
-    --message-info: #1f7bbb;
+    --message-info: #6f42c1;
     --message-error: #c53030;
-    --message-general: #70767d;
+    --message-general: #6b5b8a;
     --message-succes: #2a884b;
 
-    --message-info: #1f7bbb;
-    --message-error: #c53030;
-    --message-general: #70767d;
-    --message-succes: #2a884b;
+    /* ===== 间距 / 圆角 / 尺寸标尺 ===== */
+    --sp-0: 0px;
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-7: 32px;
+    --sp-8: 40px;
+    --sp-9: 48px;
+    --sp-10: 64px;
+
+    --radius-1: 2px;
+    --radius-2: 3px;
+    --radius-3: 4px;
+    --radius-4: 5px;
+    --radius-5: 6px;
+    --radius-6: 8px;
+
+    --size-1: 20px;
+    --size-2: 24px;
+    --size-3: 30px;
+    --size-4: 36px;
+    --size-5: 44px;
+    --size-6: 56px;
+    --size-7: 72px;
+    --size-8: 92px;
 }
 
 @mixin reset-list($margin, $padding) {
@@ -81,15 +120,25 @@ html {
 }
 
 body {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    font-size: 1.3rem;
-    line-height: 1.5;
+    font-size: 1.4rem;
+    line-height: 1.6;
     color: var(--theme-text);
     height: 100%;
     background-color: var(--theme-background);
     margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     cursor: inherit !important;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Noto Serif SC', 'Noto Sans SC', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }
 
 a {
@@ -123,6 +172,9 @@ a {
 @import './scss/_old';
 @import './scss/_admin';
 @import './scss/_fix';
+@import './scss/_messages-custom';
+@import './scss/_socialmedia';
+@import './scss/_contextmenu';
 
 .flex {
     display: flex;
@@ -203,9 +255,16 @@ a {
 }
 
 /* ================ Main ================ */
+/* 顶栏（.layout_topBar）需要独占一整行，其余内容再横排 */
+.layout_topBar {
+    flex: 0 0 100%;
+    width: 100%;
+}
+
 @media screen and (min-width: 980px) {
     main {
         display: flex;
+        flex-wrap: wrap;
     }
 }
 
