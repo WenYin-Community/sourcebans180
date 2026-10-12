@@ -1,7 +1,7 @@
 {
     "name": "sbpp/sourcebans-pp",
     "description": "Admin, ban, and comms management system for the Source engine.",
-    "version": "1.7.0",
+    "version": "1.8.0",
     "type": "project",
     "keywords": [],
     "homepage": "https://sbpp.dev",
