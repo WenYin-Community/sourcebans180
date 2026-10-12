@@ -32,6 +32,10 @@ class Auth
         $token = JWT::create($jti, $maxlife, $aid);
         self::updateLastVisit($aid);
 
+        // 将 jti 落库，使 logout() 能够作废该令牌。
+        // secret 列为 NOT NULL 且有唯一索引，这里以 jti 的哈希填充，不承载密钥语义。
+        self::insertNewToken($jti, hash('sha256', $jti));
+
         self::setCookie($token->toString(), time() + $maxlife, Host::domain(), Host::isSecure());
 
         //Login / Logout requests will trigger GC routine
@@ -47,13 +51,17 @@ class Auth
         if (empty($cookie) || preg_match('/.*\..*\..*\./', $cookie)) {
             return false;
         }
-//        $token = JWT::parse($cookie);
 
-//        if (JWT::validate($token)) {
-//            self::$dbs->query("DELETE FROM `:prefix_login_tokens` WHERE jti = :jti");
-//            self::$dbs->bind(':jti', $token->claims()->get('jti'));
-//            self::$dbs->execute();
-//        }
+        // 作废服务端记录，使该 jti 无法再通过 verify()。
+        // 即便此处失败，也必须继续清除 Cookie —— 否则用户无法登出。
+        try {
+            $token = JWT::parse($cookie);
+            self::$dbs->query("DELETE FROM `:prefix_login_tokens` WHERE jti = :jti");
+            self::$dbs->bind(':jti', $token->claims()->get('jti'));
+            self::$dbs->execute();
+        } catch (\Throwable $e) {
+            // 令牌无法解析（如密钥已轮换）时忽略，Cookie 仍会被清除
+        }
 
         self::setCookie('', 1, Host::domain(), Host::isSecure());
 
@@ -76,10 +84,20 @@ class Auth
         try {
             $token = JWT::parse($cookie);
 
-            if (JWT::validate($token)) {
-                self::updateLastAccessed($token->claims()->get('jti'));
-                return $token;
+            if (!JWT::validate($token)) {
+                return null;
             }
+
+            $jti = $token->claims()->get('jti');
+
+            // 令牌必须存在于库中才有效：logout() 删除记录后，残留的旧 Cookie
+            // 会在这里被拒绝，从而真正实现注销。
+            if (!self::checkJTI($jti)) {
+                return null;
+            }
+
+            self::updateLastAccessed($jti);
+            return $token;
         } catch (JWTException $e) {
             // Cookie 格式非法、签名不匹配或已过期 —— 视为未登录
             return null;

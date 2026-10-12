@@ -8,6 +8,8 @@ use Lcobucci\JWT\Validation\Constraint\IdentifiedBy;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
+use Psr\Clock\ClockInterface;
 
 class JWT
 {
@@ -42,7 +44,15 @@ class JWT
             new SignedWith($config->signer(), $config->signingKey()),
             new IssuedBy(Host::domain()),
             new PermittedFor(Host::domain()),
-            new IdentifiedBy($token->claims()->get('jti'))
+            new IdentifiedBy($token->claims()->get('jti')),
+            // 校验 exp / nbf / iat。缺少这一项时过期令牌会被永久接受：
+            // Auth::verify() 通过后直接按 claims['aid'] 授权，不再查库。
+            new StrictValidAt(new class implements ClockInterface {
+                public function now(): DateTimeImmutable
+                {
+                    return new DateTimeImmutable();
+                }
+            })
         ];
 
         return $config->validator()->validate($token, ...$constrains);
