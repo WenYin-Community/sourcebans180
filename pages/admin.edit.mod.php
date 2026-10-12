@@ -26,7 +26,7 @@ global $theme, $userbank;
 new AdminTabs([], $userbank, $theme);
 
 if (!isset($_GET['id'])) {
-    echo '<script>ShowBox("Error", "No mod ID set. Only follow links", "red", "", true);</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.no_mod_id') . ', "red", "", true);</script>';
     PageDie();
 }
 if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_EDIT_MODS)) {
@@ -111,7 +111,7 @@ if (isset($_POST['name'])) {
                 $_GET['id']
             )
         );
-        echo '<script>ShowBox("Mod updated", "The mod has been updated successfully", "green", "index.php?p=admin&c=mods");</script>';
+        echo '<script>ShowBox(' . Lang::js('box.success') . ', ' . Lang::js('other.mod_updated') . ', "green", "index.php?p=admin&c=mods");</script>';
     }
     // put into array to display new values after submit
     $res['name']           = $name;
@@ -121,7 +121,7 @@ if (isset($_POST['name'])) {
     $res['steam_universe'] = $steam_universe;
 }
 if (!$res) {
-    echo '<script>ShowBox("Error", "There was an error getting details. Maybe the mod has been deleted?", "red", "index.php?p=admin&c=mod");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.mod_get_failed') . ', "red", "index.php?p=admin&c=mod");</script>';
 }
 $theme->assign('mod_icon', $res['icon']);
 $theme->assign('folder', $res['modfolder']);

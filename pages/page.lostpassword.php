@@ -11,13 +11,13 @@ if (isset($_GET['email'], $_GET['validation']) && (!empty($_GET['email']) || !em
     $validation = $_GET['validation'];
 
     if (is_array($email) || is_array($validation)) {
-        print "<script>ShowBox('Error', 'Invalid request.', 'red');</script>";
+        print "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('pw.invalid_request') . "', 'red');</script>";
         Log::add("w", "Hacking attempt", "Attempted SQL-Injection.");
         PageDie();
     }
 
     if (strlen($validation) < 10) {
-        print "<script>ShowBox('Error', 'Invalid validation string.', 'red');</script>";
+        print "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('pw.invalid_token') . "', 'red');</script>";
         PageDie();
     }
 
@@ -27,7 +27,7 @@ if (isset($_GET['email'], $_GET['validation']) && (!empty($_GET['email']) || !em
     $result = $GLOBALS['PDO']->single();
 
     if (empty($result['aid']) || is_null($result['aid'])) {
-        print "<script>ShowBox('Error', 'The validation string does not match the email for this reset request.', 'red');</script>";
+        print "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('pw.token_mismatch') . "', 'red');</script>";
         PageDie();
     }
 
@@ -43,7 +43,7 @@ if (isset($_GET['email'], $_GET['validation']) && (!empty($_GET['email']) || !em
         '{home}' => Host::complete(true)
     ]);
 
-    print "<script>ShowBox('Password Reset', 'Your password has been reset and sent to your email.<br />Please check your spam folder too.<br />Please login using this password, <br />then use the change password link in Your Account.', 'blue');</script>";
+    print "<script>ShowBox('" . Lang::js('box.success') . "', 'Your password has been reset and sent to your email.<br />Please check your spam folder too.<br />Please login using this password, <br />then use the change password link in Your Account.', 'blue');</script>";
     PageDie();
 } else {
     $theme->display('page_lostpassword.tpl');

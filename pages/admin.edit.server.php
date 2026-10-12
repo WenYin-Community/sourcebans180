@@ -98,7 +98,7 @@ if (isset($_POST['address'])) {
         ));
         if ($chk) {
             $error++;
-            $errorScript .= "ShowBox('Error', 'There already is a server with that IP:Port combination.', 'red');";
+            $errorScript .= "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.server_exists') . "', 'red');";
         }
     }
 
@@ -155,7 +155,7 @@ if (isset($_POST['address'])) {
             );
         }
 
-        echo "<script>ShowBox('Server updated', 'The server has been updated successfully', 'green', 'index.php?p=admin&c=servers');TabToReload();</script>";
+        echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('other.server_updated') . "', 'green', 'index.php?p=admin&c=servers');TabToReload();</script>";
     }
 }
 

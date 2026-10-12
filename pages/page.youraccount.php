@@ -29,10 +29,10 @@ if ($userbank->GetAid() == -1) {
 }
 
 new AdminTabs([
-    ['name' => 'View Permissions', 'permission' => ALL_WEB],
-    ['name' => 'Change Password', 'permission' => ALL_WEB],
-    ['name' => 'Server Password', 'permission' => ALL_WEB],
-    ['name' => 'Change Email', 'permission' => ALL_WEB]
+    ['name' => '查看权限', 'permission' => ALL_WEB],
+    ['name' => '修改密码', 'permission' => ALL_WEB],
+    ['name' => '服务器密码', 'permission' => ALL_WEB],
+    ['name' => '修改邮箱', 'permission' => ALL_WEB]
 ], $userbank, $theme);
 
 $res      = $GLOBALS['db']->Execute("SELECT `srv_password`, `email` FROM `" . DB_PREFIX . "_admins` WHERE `aid` = '" . $userbank->GetAid() . "'");

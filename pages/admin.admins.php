@@ -24,9 +24,9 @@ if (!defined("IN_SB")) {
 global $userbank, $theme;
 
 new AdminTabs([
-    ['name' => 'List admins', 'permission' => ADMIN_OWNER|ADMIN_LIST_ADMINS],
-    ['name' => 'Add new admin', 'permission' => ADMIN_OWNER|ADMIN_ADD_ADMINS],
-    ['name' => 'Overrides', 'permission' => ADMIN_OWNER|ADMIN_ADD_ADMINS]
+    ['name' => '查看管理员', 'permission' => ADMIN_OWNER|ADMIN_LIST_ADMINS],
+    ['name' => '添加管理员', 'permission' => ADMIN_OWNER|ADMIN_ADD_ADMINS],
+    ['name' => '覆盖设置', 'permission' => ADMIN_OWNER|ADMIN_ADD_ADMINS]
 ], $userbank, $theme);
 
 $AdminsPerPage = SB_BANS_PER_PAGE;
@@ -154,10 +154,10 @@ foreach ($admins as $admin) {
     $admin['web_group']    = $userbank->GetProperty("group_name", $admin['aid']);
     $admin['server_group'] = $userbank->GetProperty("srv_groups", $admin['aid']);
     if (empty($admin['web_group']) || $admin['web_group'] == " ") {
-        $admin['web_group'] = "No Group/Individual Permissions";
+        $admin['web_group'] = "无用户组/个人权限";
     }
     if (empty($admin['server_group']) || $admin['server_group'] == " ") {
-        $admin['server_group'] = "No Group/Individual Permissions";
+        $admin['server_group'] = "无用户组/个人权限";
     }
     $num               = $GLOBALS['db']->GetRow("SELECT count(authid) AS num FROM `" . DB_PREFIX . "_bans` WHERE aid = '" . $admin['aid'] . "'");
     $admin['bancount'] = $num['num'];
@@ -191,7 +191,7 @@ if ($AdminsEnd < $admin_count) {
 }
 
 //=================[ Start Layout ]==================================
-$admin_nav = 'displaying&nbsp;' . $AdminsStart . '&nbsp;-&nbsp;' . $AdminsEnd . '&nbsp;of&nbsp;' . $admin_count . '&nbsp;results';
+$admin_nav = Lang::get('pagination.displaying', ['start' => $AdminsStart, 'end' => $AdminsEnd, 'total' => $admin_count]);
 
 if (strlen($prev) > 0) {
     $admin_nav .= ' | <b>' . $prev . '</b>';

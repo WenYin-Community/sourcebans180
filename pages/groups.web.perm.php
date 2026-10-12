@@ -9,74 +9,74 @@ if (!defined("IN_SB")) {
     <td colspan="3"><h4 id="webtop">{title}</h4></td>
   </tr>
   <tr id="wrootcheckbox" name="wrootcheckbox">
-    <td colspan="2" class="tablerow2">Root Admin (Full Admin Access)</td>
+    <td colspan="2" class="tablerow2">超级管理员（完全管理权限）</td>
     <td align="center" class="tablerow2"><input type="checkbox" name="p2" id="p2" onclick="UpdateCheckBox(2, 3, 39);" value="1" /></td>
   </tr>
   <tr>
-    <td colspan="2" class="tablerow4">Manage Admins </td>
+    <td colspan="2" class="tablerow4">管理管理员 </td>
     <td align="center" class="tablerow4"><input type="checkbox" name="p3" id="p3" onclick="UpdateCheckBox(3, 4, 7);" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">List Admins </td>
+    <td class="tablerow1">查看管理员 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p4" id="p4" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Add Admins</td>
+    <td class="tablerow1">添加管理员</td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p5" id="p5" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Edit Admins</td>
+    <td class="tablerow1">编辑管理员</td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p6" id="p6" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Delete Admins</td>
+    <td class="tablerow1">删除管理员</td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p7" id="p7" /></td>
   </tr>
   <tr class="tablerow4">
-    <td colspan="2" class="tablerow4">Server Management </td>
+    <td colspan="2" class="tablerow4">服务器管理 </td>
     <td align="center" class="tablerow4"><input type="checkbox" name="p8" id="p8" onclick="UpdateCheckBox(8, 9, 12);"/></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">List Servers </td>
+    <td class="tablerow1">查看服务器 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p9" id="p9" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Add New Servers </td>
+    <td class="tablerow1">添加服务器 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p10" id="p10" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Edit Servers </td>
+    <td class="tablerow1">编辑服务器 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p11" id="p11" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Delete Servers </td>
+    <td class="tablerow1">删除服务器 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p12" id="p12" /></td>
   </tr>
   <tr>
-    <td colspan="2" class="tablerow4">Ban Management </td>
+    <td colspan="2" class="tablerow4">封禁管理 </td>
     <td align="center" class="tablerow4"><input type="checkbox" name="p13" id="p13" onclick="UpdateCheckBox(13, 14, 20, 32, 33, 34, 38, 39);"/></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Add a Ban </td>
+    <td class="tablerow1">添加封禁 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p14" id="p14" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Edit Own Bans </td>
+    <td class="tablerow1">编辑自己的封禁 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p16" id="p16" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Edit Bans of Group </td>
+    <td class="tablerow1">编辑封禁 of Group </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p17" id="p17" /></td>
   </tr>
   <tr class="tablerow1">
@@ -111,12 +111,12 @@ if (!defined("IN_SB")) {
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Delete Bans </td>
+    <td class="tablerow1">删除封禁 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p33" id="p33" /></td>
   </tr>
   <tr class="tablerow1">
     <td width="15%">&nbsp;</td>
-    <td class="tablerow1">Import Bans </td>
+    <td class="tablerow1">导入封禁 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p34" id="p34" /></td>
   </tr>
   <tr>
@@ -125,7 +125,7 @@ if (!defined("IN_SB")) {
   </tr>
   <tr class="tablerow1">
     <td>&nbsp;</td>
-    <td class="tablerow1">List Groups </td>
+    <td class="tablerow1">查看用户组 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p22" id="p22" /></td>
   </tr>
   <tr class="tablerow1">
@@ -135,12 +135,12 @@ if (!defined("IN_SB")) {
   </tr>
   <tr class="tablerow1">
     <td>&nbsp;</td>
-    <td class="tablerow1">Edit Groups </td>
+    <td class="tablerow1">编辑用户组 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p24" id="p24" /></td>
   </tr>
   <tr class="tablerow1">
     <td>&nbsp;</td>
-    <td class="tablerow1">Delete Groups </td>
+    <td class="tablerow1">删除用户组 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p25" id="p25" /></td>
   </tr>
   <tr>
@@ -167,7 +167,7 @@ if (!defined("IN_SB")) {
   </tr>
   <tr class="tablerow1">
     <td>&nbsp;</td>
-    <td class="tablerow1">List Mods </td>
+    <td class="tablerow1">查看模组 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p28" id="p28" /></td>
   </tr>
   <tr class="tablerow1">
@@ -177,12 +177,12 @@ if (!defined("IN_SB")) {
   </tr>
   <tr class="tablerow1">
     <td>&nbsp;</td>
-    <td class="tablerow1">Edit Mods </td>
+    <td class="tablerow1">编辑模组 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p30" id="p30" /></td>
   </tr>
   <tr class="tablerow1">
     <td>&nbsp;</td>
-    <td class="tablerow1">Delete Mods </td>
+    <td class="tablerow1">删除模组 </td>
     <td align="center" class="tablerow1"><input type="checkbox" name="p31" id="p31" /></td>
   </tr>
 </table>

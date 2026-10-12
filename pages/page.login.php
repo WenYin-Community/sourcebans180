@@ -25,64 +25,50 @@ if (!defined("IN_SB")) {
 global $userbank, $theme;
 if (isset($_GET['m'])) {
     $lostpassword_url = Host::complete() . '/index.php?p=lostpassword';
-    switch ($_GET['m']) {
-        case 'no_access':
-            echo <<<HTML
+
+    // 提示文案统一走 i18n；Lang::js() 会自动转义，保证嵌入 JS 单引号字面量不截断
+    $restore_link = '<a href="' . $lostpassword_url . '">' . Lang::get('login.empty_pwd.restore') . '</a>';
+    $lost_link    = '<a href="' . $lostpassword_url . '">' . Lang::get('login.failed.lost') . '</a>';
+
+    $boxes = [
+        'no_access' => [
+            'title' => Lang::js('login.title.no_access'),
+            'text'  => Lang::js('login.no_access'),
+            'color' => 'red',
+            'html'  => 'false',
+        ],
+        'empty_pwd' => [
+            'title' => Lang::js('login.title.info'),
+            'text'  => Lang::js('login.empty_pwd', ['restore' => $restore_link]),
+            'color' => 'blue',
+            'html'  => 'true',
+        ],
+        'failed' => [
+            'title' => Lang::js('login.title.error'),
+            'text'  => Lang::js('login.failed', ['lost' => $lost_link]),
+            'color' => 'red',
+            'html'  => 'false',
+        ],
+    ];
+
+    if (isset($boxes[$_GET['m']])) {
+        $box    = $boxes[$_GET['m']];
+        $title  = $box['title'];
+        $text   = $box['text'];
+        $color  = $box['color'];
+        $parsed = $box['html'];
+        echo <<<HTML
 				<script>
 					ShowBox(
-						'Error - No Access',
-						'You dont have permission to access this page.<br />' +
-						'Please login with an account that has access.',
-						'red', '', false
+						'{$title}',
+						'{$text}',
+						'{$color}', '', {$parsed}
 					);
 				</script>
 HTML;
-            break;
-
-        case 'empty_pwd':
-            echo <<<HTML
-				<script>
-					ShowBox(
-						'Information',
-						'You are unable to login because your account have an empty password set.<br />' +
-						'Please <a href="$lostpassword_url">restore your password</a> or ask an admin to do that for you.<br />' +
-						'Do note that you are required to have a non empty password set event if you sign in through Steam.',
-						'blue', '', true
-					);
-				</script>
-HTML;
-            break;
-
-        case 'failed':
-            echo <<<HTML
-    			<script>
-    				ShowBox(
-                        'Error',
-    					'The username or password you supplied was incorrect.<br \>'+
-                        'If you have forgotten your password, use the <a href="$lostpassword_url">Lost Password</a> link.',
-    					'red', '', false
-    				);
-    			</script>
-HTML;
-            break;
-
-        case 'steam_failed':
-            echo <<<HTML
-                <script>
-                    ShowBox(
-                        'Error',
-                        'Steam login was sucessful, but your SteamID isn\'t associated with any account.',
-                        'red', '', false
-                    );
-                </script>
-HTML;
-            break;
     }
-
-
 }
 
-$theme->assign('steamlogin_show', Config::getBool('config.enablesteamlogin'));
 $theme->assign('redir', "DoLogin('');");
 $theme->left_delimiter  = "-{";
 $theme->right_delimiter = "}-";

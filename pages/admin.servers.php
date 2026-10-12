@@ -6,8 +6,8 @@ if (!defined("IN_SB")) {
 global $userbank, $theme;
 
 new AdminTabs([
-    ['name' => 'List servers', 'permission' => ADMIN_OWNER|ADMIN_LIST_SERVERS],
-    ['name' => 'Add new server', 'permission' => ADMIN_OWNER|ADMIN_ADD_SERVER]
+    ['name' => '查看服务器', 'permission' => ADMIN_OWNER|ADMIN_LIST_SERVERS],
+    ['name' => '添加服务器', 'permission' => ADMIN_OWNER|ADMIN_ADD_SERVER]
 ], $userbank, $theme);
 
 $servers = $GLOBALS['db']->GetAll("SELECT srv.ip ip, srv.port port, srv.sid sid, mo.icon icon, srv.enabled enabled FROM `" . DB_PREFIX . "_servers` AS srv
@@ -62,7 +62,7 @@ $theme->assign('port', '');
 $theme->assign('rcon', '');
 $theme->assign('modid', '');
 
-$theme->assign('submit_text', "Add Server");
+$theme->assign('submit_text', "添加服务器");
 
 $theme->display('page_admin_servers_list.tpl');
 

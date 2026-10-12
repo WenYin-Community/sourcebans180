@@ -24,8 +24,8 @@ if (!defined("IN_SB")) {
 global $userbank, $theme;
 
 new AdminTabs([
-    ['name' => 'List MODs', 'permission' => ADMIN_OWNER|ADMIN_LIST_MODS],
-    ['name' => 'Add new MOD', 'permission' => ADMIN_OWNER|ADMIN_ADD_MODS]
+    ['name' => '查看模组', 'permission' => ADMIN_OWNER|ADMIN_LIST_MODS],
+    ['name' => '添加模组', 'permission' => ADMIN_OWNER|ADMIN_ADD_MODS]
 ], $userbank, $theme);
 
 $mod_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_mods` WHERE mid > 0 ORDER BY name ASC") ;
@@ -34,7 +34,7 @@ $mod_count = $query['cnt'];
 ?>
 <div id="admin-page-content">
     <!-- List Mods -->
-    <div class="tabcontent" id="List MODs">
+    <div class="tabcontent" id="查看模组">
 <?php
 $theme->assign('mod_count', $mod_count);
 $theme->assign('permission_listmods', $userbank->HasAccess(ADMIN_OWNER | ADMIN_LIST_MODS));
@@ -46,7 +46,7 @@ $theme->display('page_admin_mods_list.tpl');
 ?>
     </div>
     <!-- Add Mods -->
-    <div class="tabcontent" id="Add new MOD">
+    <div class="tabcontent" id="添加模组">
 <?php
 $theme->assign('permission_add', $userbank->HasAccess(ADMIN_OWNER | ADMIN_ADD_MODS));
 $theme->display('page_admin_mods_add.tpl');

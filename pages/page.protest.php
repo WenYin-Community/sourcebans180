@@ -24,7 +24,7 @@ use Sbpp\Mail\Mailer;
 global $userbank, $theme;
 
 if (!Config::getBool('config.enableprotest')) {
-    print "<script>ShowBox('Error', 'This page is disabled. You should not be here.', 'red');</script>";
+    print "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('other.page_disabled') . "', 'red');</script>";
     PageDie();
 }
 if (!defined("IN_SB")) {
@@ -103,7 +103,7 @@ if (!isset($_POST['subprotest']) || $_POST['subprotest'] != 1) {
     }
 
     if (!$validsubmit) {
-        print "<script>ShowBox('Error', '$errors', 'red');</script>";
+        print "<script>ShowBox('" . Lang::js('box.error') . "', '$errors', 'red');</script>";
     }
 
     if ($validsubmit && $BanId != -1) {
@@ -163,7 +163,7 @@ if (!isset($_POST['subprotest']) || $_POST['subprotest'] != 1) {
             ]);
         }
 
-        echo "<script>ShowBox('Successful', 'Your protest has been sent.', 'green');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('other.protest_sent') . "', 'green');</script>";
     }
 }
 

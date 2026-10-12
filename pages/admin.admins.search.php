@@ -79,119 +79,119 @@ $webflag[] = array(
     "flag" => "ADMIN_LIST_ADMINS"
 );
 $webflag[] = array(
-    "name" => "Add admins",
+    "name" => "添加管理员",
     "flag" => "ADMIN_ADD_ADMINS"
 );
 $webflag[] = array(
-    "name" => "Edit admins",
+    "name" => "编辑管理员",
     "flag" => "ADMIN_EDIT_ADMINS"
 );
 $webflag[] = array(
-    "name" => "Delete admins",
+    "name" => "删除管理员",
     "flag" => "ADMIN_DELETE_ADMINS"
 );
 $webflag[] = array(
-    "name" => "View servers",
+    "name" => "查看服务器",
     "flag" => "ADMIN_LIST_SERVERS"
 );
 $webflag[] = array(
-    "name" => "Add servers",
+    "name" => "添加服务器",
     "flag" => "ADMIN_ADD_SERVER"
 );
 $webflag[] = array(
-    "name" => "Edit servers",
+    "name" => "编辑服务器",
     "flag" => "ADMIN_EDIT_SERVERS"
 );
 $webflag[] = array(
-    "name" => "Delete servers",
+    "name" => "删除服务器",
     "flag" => "ADMIN_DELETE_SERVERS"
 );
 $webflag[] = array(
-    "name" => "Add bans",
+    "name" => "添加封禁",
     "flag" => "ADMIN_ADD_BAN"
 );
 $webflag[] = array(
-    "name" => "Edit own bans",
+    "name" => "编辑自己的封禁",
     "flag" => "ADMIN_EDIT_OWN_BANS"
 );
 $webflag[] = array(
-    "name" => "Edit groups bans",
+    "name" => "编辑用户组的封禁",
     "flag" => "ADMIN_EDIT_GROUP_BANS"
 );
 $webflag[] = array(
-    "name" => "Edit all bans",
+    "name" => "编辑所有封禁",
     "flag" => "ADMIN_EDIT_ALL_BANS"
 );
 $webflag[] = array(
-    "name" => "Ban protests",
+    "name" => "封禁申诉",
     "flag" => "ADMIN_BAN_PROTESTS"
 );
 $webflag[] = array(
-    "name" => "Ban submissions",
+    "name" => "封禁提交",
     "flag" => "ADMIN_BAN_SUBMISSIONS"
 );
 $webflag[] = array(
-    "name" => "Delete bans",
+    "name" => "删除封禁",
     "flag" => "ADMIN_DELETE_BAN"
 );
 $webflag[] = array(
-    "name" => "Unban own bans",
+    "name" => "解除自己的封禁",
     "flag" => "ADMIN_UNBAN_OWN_BANS"
 );
 $webflag[] = array(
-    "name" => "Unban group bans",
+    "name" => "解除用户组的封禁",
     "flag" => "ADMIN_UNBAN_GROUP_BANS"
 );
 $webflag[] = array(
-    "name" => "Unban all bans",
+    "name" => "解除所有封禁",
     "flag" => "ADMIN_UNBAN"
 );
 $webflag[] = array(
-    "name" => "Import bans",
+    "name" => "导入封禁",
     "flag" => "ADMIN_BAN_IMPORT"
 );
 $webflag[] = array(
-    "name" => "Submission email notifying",
+    "name" => "提交邮件通知",
     "flag" => "ADMIN_NOTIFY_SUB"
 );
 $webflag[] = array(
-    "name" => "Protest email notifying",
+    "name" => "申诉邮件通知",
     "flag" => "ADMIN_NOTIFY_PROTEST"
 );
 $webflag[] = array(
-    "name" => "List groups",
+    "name" => "查看用户组",
     "flag" => "ADMIN_LIST_GROUPS"
 );
 $webflag[] = array(
-    "name" => "Add groups",
+    "name" => "添加用户组",
     "flag" => "ADMIN_ADD_GROUP"
 );
 $webflag[] = array(
-    "name" => "Edit groups",
+    "name" => "编辑用户组",
     "flag" => "ADMIN_EDIT_GROUPS"
 );
 $webflag[] = array(
-    "name" => "Delete groups",
+    "name" => "删除用户组",
     "flag" => "ADMIN_DELETE_GROUPS"
 );
 $webflag[] = array(
-    "name" => "Web settings",
+    "name" => "网页设置",
     "flag" => "ADMIN_WEB_SETTINGS"
 );
 $webflag[] = array(
-    "name" => "List mods",
+    "name" => "查看模组",
     "flag" => "ADMIN_LIST_MODS"
 );
 $webflag[] = array(
-    "name" => "Add mods",
+    "name" => "添加模组",
     "flag" => "ADMIN_ADD_MODS"
 );
 $webflag[] = array(
-    "name" => "Edit mods",
+    "name" => "编辑模组",
     "flag" => "ADMIN_EDIT_MODS"
 );
 $webflag[] = array(
-    "name" => "Delete mods",
+    "name" => "删除模组",
     "flag" => "ADMIN_DELETE_MODS"
 );
 $webflags  = [];
@@ -204,15 +204,15 @@ foreach ($webflag as $flag) {
 
 //server permissions
 $serverflag[] = array(
-    "name" => "Full Admin",
+    "name" => "完全管理员",
     "flag" => "SM_ROOT"
 );
 $serverflag[] = array(
-    "name" => "Reserved slot",
+    "name" => "保留通道",
     "flag" => "SM_RESERVED_SLOT"
 );
 $serverflag[] = array(
-    "name" => "Generic admin",
+    "name" => "通用管理",
     "flag" => "SM_GENERIC"
 );
 $serverflag[] = array(
@@ -224,7 +224,7 @@ $serverflag[] = array(
     "flag" => "SM_BAN"
 );
 $serverflag[] = array(
-    "name" => "Un-ban",
+    "name" => "解封",
     "flag" => "SM_UNBAN"
 );
 $serverflag[] = array(
@@ -232,27 +232,27 @@ $serverflag[] = array(
     "flag" => "SM_SLAY"
 );
 $serverflag[] = array(
-    "name" => "Map change",
+    "name" => "更换地图",
     "flag" => "SM_MAP"
 );
 $serverflag[] = array(
-    "name" => "Change cvars",
+    "name" => "修改 ConVar",
     "flag" => "SM_CVAR"
 );
 $serverflag[] = array(
-    "name" => "Run configs",
+    "name" => "执行配置文件",
     "flag" => "SM_CONFIG"
 );
 $serverflag[] = array(
-    "name" => "Admin chat",
+    "name" => "管理员聊天",
     "flag" => "SM_CHAT"
 );
 $serverflag[] = array(
-    "name" => "Start votes",
+    "name" => "发起投票",
     "flag" => "SM_VOTE"
 );
 $serverflag[] = array(
-    "name" => "Password server",
+    "name" => "服务器加密码",
     "flag" => "SM_PASSWORD"
 );
 $serverflag[] = array(
@@ -260,31 +260,31 @@ $serverflag[] = array(
     "flag" => "SM_RCON"
 );
 $serverflag[] = array(
-    "name" => "Enable Cheats",
+    "name" => "启用作弊",
     "flag" => "SM_CHEATS"
 );
 $serverflag[] = array(
-    "name" => "Custom flag 1",
+    "name" => "自定义标志位 1",
     "flag" => "SM_CUSTOM1"
 );
 $serverflag[] = array(
-    "name" => "Custom flag 2",
+    "name" => "自定义标志位 2",
     "flag" => "SM_CUSTOM2"
 );
 $serverflag[] = array(
-    "name" => "Custom flag 3",
+    "name" => "自定义标志位 3",
     "flag" => "SM_CUSTOM3"
 );
 $serverflag[] = array(
-    "name" => "Custom flag 4",
+    "name" => "自定义标志位 4",
     "flag" => "SM_CUSTOM4"
 );
 $serverflag[] = array(
-    "name" => "Custom flag 5",
+    "name" => "自定义标志位 5",
     "flag" => "SM_CUSTOM5"
 );
 $serverflag[] = array(
-    "name" => "Custom flag 6",
+    "name" => "自定义标志位 6",
     "flag" => "SM_CUSTOM6"
 );
 $serverflags  = [];

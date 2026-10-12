@@ -3,7 +3,7 @@ global $theme;
 
 $breadcrumb = [
     [
-        'title' => 'Home',
+        'title' => Lang::get('common.home'),
         'url' => 'index.php?p=home'
     ],
     [

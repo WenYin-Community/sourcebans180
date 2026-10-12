@@ -24,17 +24,17 @@ if (!defined("IN_SB")) {
 }
 
 new AdminTabs([
-    ['name' => 'Add a ban', 'permission' => ADMIN_OWNER|ADMIN_ADD_BAN],
-    ['name' => 'Ban protests', 'permission' => ADMIN_OWNER|ADMIN_BAN_PROTESTS],
-    ['name' => 'Ban submissions', 'permission' => ADMIN_OWNER|ADMIN_BAN_SUBMISSIONS],
-    ['name' => 'Import bans', 'permission' => ADMIN_OWNER|ADMIN_BAN_IMPORT],
-    ['name' => 'Group ban', 'permission' => ADMIN_OWNER|ADMIN_ADD_BAN, 'config' => Config::getBool('config.enablegroupbanning')]
+    ['name' => '添加封禁', 'permission' => ADMIN_OWNER|ADMIN_ADD_BAN],
+    ['name' => '封禁申诉', 'permission' => ADMIN_OWNER|ADMIN_BAN_PROTESTS],
+    ['name' => '封禁提交', 'permission' => ADMIN_OWNER|ADMIN_BAN_SUBMISSIONS],
+    ['name' => '导入封禁', 'permission' => ADMIN_OWNER|ADMIN_BAN_IMPORT],
+    ['name' => '批量封禁', 'permission' => ADMIN_OWNER|ADMIN_ADD_BAN, 'config' => Config::getBool('config.enablegroupbanning')]
 ], $userbank, $theme);
 
 if (isset($_GET['mode']) && $_GET['mode'] == "delete") {
-    echo "<script>ShowBox('Ban Deleted', 'The ban has been deleted from SourceBans', 'green', '', true);</script>";
+    echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('other.ban_deleted') . "', 'green', '', true);</script>";
 } elseif (isset($_GET['mode']) && $_GET['mode']=="unban") {
-    echo "<script>ShowBox('Player Unbanned', 'The Player has been unbanned from SourceBans', 'green', '', true);</script>";
+    echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('other.player_unbanned') . "', 'green', '', true);</script>";
 }
 
 if (isset($GLOBALS['IN_ADMIN'])) {
@@ -99,34 +99,34 @@ if (isset($_POST['action']) && $_POST['action'] == "importBans") {
         Log::add("m", "Bans imported", "$bancnt Ban(s) imported");
     }
 
-    echo "<script>ShowBox('Bans Import', '$bancnt ban" . ($bancnt != 1 ? "s have" : " has") . " been imported and posted.', 'green', '');</script>";
+    echo "<script>ShowBox('" . Lang::js('box.success') . "', '$bancnt ban" . ($bancnt != 1 ? "s have" : " has") . " been imported and posted.', 'green', '');</script>";
 }
 
 if (isset($_GET["rebanid"])) {
     echo '<script type="text/javascript">xajax_PrepareReban("' . (int) $_GET["rebanid"] . '");</script>';
 }
 if ((isset($_GET['action']) && $_GET['action'] == "pasteBan") && isset($_GET['pName']) && isset($_GET['sid'])) {
-    echo "<script type=\"text/javascript\">ShowBox('Loading..','<b>Loading...</b><br><i>Please Wait!</i>', 'blue', '', true);document.getElementById('dialog-control').setStyle('display', 'none');xajax_PasteBan('" . (int) $_GET['sid'] . "', '" . addslashes($_GET['pName']) . "');</script>";
+    echo "<script type=\"text/javascript\">ShowBox('" . Lang::js('box.loading') . "', '<b>Loading...</b><br><i>Please Wait!</i>', 'blue', '', true);document.getElementById('dialog-control').setStyle('display', 'none');xajax_PasteBan('" . (int) $_GET['sid'] . "', '" . addslashes($_GET['pName']) . "');</script>";
 }
 
 echo '<div id="admin-page-content">';
 // Add Ban
-echo '<div class="tabcontent" id="Add a ban">';
+echo '<div class="tabcontent" id="添加封禁">';
 $theme->assign('permission_addban', $userbank->HasAccess(ADMIN_OWNER | ADMIN_ADD_BAN));
 $theme->assign('customreason', (Config::getBool('bans.customreasons')) ? unserialize(Config::get('bans.customreasons')) : false);
 $theme->display('page_admin_bans_add.tpl');
 echo '</div>';
 
 // Protests
-echo '<div class="tabcontent" id="Ban protests">';
+echo '<div class="tabcontent" id="封禁申诉">';
 echo '<div id="tabsWrapper" style="margin:0px;">
     <div id="tabs">
 	<ul>
 		<li id="utab-p0" class="active">
-			<a href="index.php?p=admin&c=bans#^1~p0" id="admin_utab_p0" onclick="Swap2ndPane(0,\'p\');" class="tip" title="Show Protests :: Show current protests." target="_self">Current</a>
+			<a href="index.php?p=admin&c=bans#^1~p0" id="admin_utab_p0" onclick="Swap2ndPane(0,\'p\');" class="tip" title="查看申诉 :: 显示当前申诉。" target="_self">当前</a>
 		</li>
 		<li id="utab-p1" class="nonactive">
-			<a href="index.php?p=admin&c=bans#^1~p1" id="admin_utab_p1" onclick="Swap2ndPane(1,\'p\');" class="tip" title="Show Archive :: Show the protest archive." target="_self">Archive</a>
+			<a href="index.php?p=admin&c=bans#^1~p1" id="admin_utab_p1" onclick="Swap2ndPane(1,\'p\');" class="tip" title="查看归档 :: 显示申诉归档。" target="_self">归档</a>
 		</li>
 	</ul>
 	</div>
@@ -157,7 +157,7 @@ if ($PageEnd < $page_count) {
     $next = "";
 }
 
-$page_nav = 'displaying&nbsp;' . $PageStart . '&nbsp;-&nbsp;' . $PageEnd . '&nbsp;of&nbsp;' . $page_count . '&nbsp;results';
+$page_nav = Lang::get('pagination.displaying', ['start' => $PageStart, 'end' => $PageEnd, 'total' => $page_count]);
 
 if (strlen($prev) > 0) {
     $page_nav .= ' | <b>' . $prev . '</b>';
@@ -306,7 +306,7 @@ if ($PageEnd < $page_count) {
     $next = "";
 }
 
-$page_nav = 'displaying&nbsp;' . $PageStart . '&nbsp;-&nbsp;' . $PageEnd . '&nbsp;of&nbsp;' . $page_count . '&nbsp;results';
+$page_nav = Lang::get('pagination.displaying', ['start' => $PageStart, 'end' => $PageEnd, 'total' => $page_count]);
 
 if (strlen($prev) > 0) {
     $page_nav .= ' | <b>' . $prev . '</b>';
@@ -438,15 +438,15 @@ echo '</div>';
 
 
 //Submissions page
-echo '<div class="tabcontent" id="Ban submissions">';
+echo '<div class="tabcontent" id="封禁提交">';
 echo '<div id="tabsWrapper" style="margin:0px;">
     <div id="tabs">
 	<ul>
 		<li id="utab-s0" class="active">
-			<a href="index.php?p=admin&c=bans#^2~s0" id="admin_utab_s0" onclick="Swap2ndPane(0,\'s\');" class="tip" title="Show Submissions :: Show current submissions." target="_self">Current</a>
+			<a href="index.php?p=admin&c=bans#^2~s0" id="admin_utab_s0" onclick="Swap2ndPane(0,\'s\');" class="tip" title="查看提交 :: 显示当前提交。" target="_self">当前</a>
 		</li>
 		<li id="utab-s1" class="nonactive">
-			<a href="index.php?p=admin&c=bans#^2~s1" id="admin_utab_s1" onclick="Swap2ndPane(1,\'s\');" class="tip" title="Show Archive :: Show the submission archive." target="_self">Archive</a>
+			<a href="index.php?p=admin&c=bans#^2~s1" id="admin_utab_s1" onclick="Swap2ndPane(1,\'s\');" class="tip" title="查看归档 :: 显示提交归档。" target="_self">归档</a>
 		</li>
 	</ul>
 	</div>
@@ -476,7 +476,7 @@ if ($PageEnd < $page_count) {
     $next = "";
 }
 
-$page_nav = 'displaying&nbsp;' . $PageStart . '&nbsp;-&nbsp;' . $PageEnd . '&nbsp;of&nbsp;' . $page_count . '&nbsp;results';
+$page_nav = Lang::get('pagination.displaying', ['start' => $PageStart, 'end' => $PageEnd, 'total' => $page_count]);
 
 if (strlen($prev) > 0) {
     $page_nav .= ' | <b>' . $prev . '</b>';
@@ -610,7 +610,7 @@ if ($PageEnd < $page_count) {
     $next = "";
 }
 
-$page_nav = 'displaying&nbsp;' . $PageStart . '&nbsp;-&nbsp;' . $PageEnd . '&nbsp;of&nbsp;' . $page_count . '&nbsp;results';
+$page_nav = Lang::get('pagination.displaying', ['start' => $PageStart, 'end' => $PageEnd, 'total' => $page_count]);
 
 if (strlen($prev) > 0) {
     $page_nav .= ' | <b>' . $prev . '</b>';
@@ -725,7 +725,7 @@ $theme->display('page_admin_bans_submissions_archiv.tpl');
 echo '</div>';
 echo '</div>';
 
-echo '<div class="tabcontent" id="Import bans">';
+echo '<div class="tabcontent" id="导入封禁">';
 $theme->assign('permission_import', $userbank->HasAccess(ADMIN_OWNER | ADMIN_BAN_IMPORT));
 if (ini_get('safe_mode') == 1) {
     $requirements = false;
@@ -736,7 +736,7 @@ $theme->assign('extreq', $requirements);
 $theme->display('page_admin_bans_import.tpl');
 echo '</div>';
 
-echo '<div class="tabcontent" id="Group ban">';
+echo '<div class="tabcontent" id="批量封禁">';
 $theme->assign('permission_addban', $userbank->HasAccess(ADMIN_OWNER | ADMIN_ADD_BAN));
 $theme->assign('groupbanning_enabled', Config::getBool('config.enablegroupbanning'));
 if (isset($_GET['fid'])) {

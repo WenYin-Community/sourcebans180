@@ -27,11 +27,11 @@ global $theme;
 new AdminTabs([], $userbank, $theme);
 
 if ($_GET['key'] != $_SESSION['banlist_postkey']) {
-    echo '<script>ShowBox("Error", "Possible hacking attempt (URL Key mismatch)!", "red", "index.php?p=admin&c=bans");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.hacking_attempt') . ', "red", "index.php?p=admin&c=bans");</script>';
     PageDie();
 }
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    echo '<script>ShowBox("Error", "No ban id specified. Please only follow links!", "red", "index.php?p=admin&c=bans");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.no_ban_id') . ', "red", "index.php?p=admin&c=bans");</script>';
     PageDie();
 }
 
@@ -44,7 +44,7 @@ $res = $GLOBALS['db']->GetRow("
     				WHERE bid = {$_GET['id']}");
 
 if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_EDIT_ALL_BANS) && (!$userbank->HasAccess(ADMIN_EDIT_OWN_BANS) && $res[8] != $userbank->GetAid()) && (!$userbank->HasAccess(ADMIN_EDIT_GROUP_BANS) && $res->fields['gid'] != $userbank->GetProperty('gid'))) {
-    echo '<script>ShowBox("Error", "You don\'t have access to this!", "red", "index.php?p=admin&c=bans");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.no_access') . ', "red", "index.php?p=admin&c=bans");</script>';
     PageDie();
 }
 
@@ -198,12 +198,12 @@ if (isset($_POST['name'])) {
             Log::add("m", "Ban length edited", "Ban length for ({$lengthrev->fields['authid']}) has been updated."
                 . " Before: {$lengthrev->fields['length']}; Now: {$_POST['banlength']}.");
         }
-        echo '<script>ShowBox("Ban updated", "The ban has been updated successfully", "green", "index.php?p=banlist' . $pagelink . '");</script>';
+        echo '<script>ShowBox(' . Lang::js('box.success') . ', ' . Lang::js('other.ban_updated') . ', "green", "index.php?p=banlist' . $pagelink . '");</script>';
     }
 }
 
 if (!$res) {
-    echo '<script>ShowBox("Error", "There was an error getting details. Maybe the ban has been deleted?", "red", "index.php?p=banlist' . $pagelink . '");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.ban_get_failed') . ', "red", "index.php?p=banlist' . $pagelink . '");</script>';
 }
 
 $theme->assign('ban_name', $res['name']);

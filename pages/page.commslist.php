@@ -28,7 +28,7 @@ if (!defined("IN_SB")) {
     die();
 }
 if (!Config::getBool('config.enablecomms')) {
-    print "<script>ShowBox('Error', 'This page is disabled. You should not be here.', 'red');</script>";
+    print "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('other.page_disabled') . "', 'red');</script>";
     PageDie();
 }
 $BansPerPage = SB_BANS_PER_PAGE;
@@ -74,7 +74,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id'])) {
         $bid
     ));
     if (empty($row) || !$row) {
-        echo "<script>ShowBox('Player Not UnGagged', 'The player was not ungagged, either already ungagged or not a valid block.', 'red', 'index.php?p=commslist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('other.ungag_failed') . "', 'red', 'index.php?p=commslist$pagelink');</script>";
         PageDie();
     }
 
@@ -96,10 +96,10 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id'])) {
     }
 
     if ($res) {
-        echo "<script>ShowBox('Player UnGagged', '" . $row['name'] . " (" . $row['authid'] . ") has been ungagged from SourceBans.', 'green', 'index.php?p=commslist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . $row['name'] . " (" . $row['authid'] . ") has been ungagged from SourceBans.', 'green', 'index.php?p=commslist$pagelink');</script>";
         Log::add("m", "Player UnGagged", "$row[name] ($row[authid]) has been ungagged.");
     } else {
-        echo "<script>ShowBox('Player NOT UnGagged', 'There was an error ungagging " . $row['name'] . "', 'red', 'index.php?p=commsist$pagelink', true);</script>";
+        echo "<script>ShowBox('" . Lang::js('box.error') . "', 'There was an error ungagging " . $row['name'] . "', 'red', 'index.php?p=commsist$pagelink', true);</script>";
     }
 } else if (isset($_GET['a']) && $_GET['a'] == "unmute" && isset($_GET['id'])) {
     if ($_GET['key'] != $_SESSION['banlist_postkey']) {
@@ -119,7 +119,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id'])) {
         $bid
     ));
     if (empty($row) || !$row) {
-        echo "<script>ShowBox('Player Not UnGagged', 'The player was not unmuted, either already unmuted or not a valid block.', 'red', 'index.php?p=commslist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('other.unmute_failed') . "', 'red', 'index.php?p=commslist$pagelink');</script>";
         PageDie();
     }
 
@@ -141,10 +141,10 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id'])) {
     }
 
     if ($res) {
-        echo "<script>ShowBox('Player UnMuted', '" . $row['name'] . " (" . $row['authid'] . ") has been unmuted from SourceBans.', 'green', 'index.php?p=commslist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . $row['name'] . " (" . $row['authid'] . ") has been unmuted from SourceBans.', 'green', 'index.php?p=commslist$pagelink');</script>";
         Log::add("m", "Player UnMuted", "$row[name] ($row[authid]) has been unmuted.");
     } else {
-        echo "<script>ShowBox('Player NOT UnGagged', 'There was an error unmuted " . $row['name'] . "', 'red', 'index.php?p=commsist$pagelink', true);</script>";
+        echo "<script>ShowBox('" . Lang::js('box.error') . "', 'There was an error unmuted " . $row['name'] . "', 'red', 'index.php?p=commsist$pagelink', true);</script>";
     }
 } else if (isset($_GET['a']) && $_GET['a'] == "delete") {
     if ($_GET['key'] != $_SESSION['banlist_postkey']) {
@@ -152,7 +152,7 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id'])) {
     }
 
     if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_DELETE_BAN)) {
-        echo "<script>ShowBox('Error', 'You do not have access to this.', 'red', 'index.php?p=commslist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('other.no_access') . "', 'red', 'index.php?p=commslist$pagelink');</script>";
         PageDie();
     }
 
@@ -191,10 +191,10 @@ if (isset($_GET['a']) && $_GET['a'] == "ungag" && isset($_GET['id'])) {
     }
 
     if ($res) {
-        echo "<script>ShowBox('Block Deleted', 'The block for \'" . $steam['name'] . "\' (" . $steam['authid'] . ") has been deleted from SourceBans', 'green', 'index.php?p=commslist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.success') . "', 'The block for \'" . $steam['name'] . "\' (" . $steam['authid'] . ") has been deleted from SourceBans', 'green', 'index.php?p=commslist$pagelink');</script>";
         Log::add("m", "Block Deleted", "Block $steam[name] ($steam[authid]) has been deleted.");
     } else {
-        echo "<script>ShowBox('Ban NOT Deleted', 'The ban for \'" . $steam['name'] . "\' had an error while being removed.', 'red', 'index.php?p=commslist$pagelink', true);</script>";
+        echo "<script>ShowBox('" . Lang::js('box.error') . "', 'The ban for \'" . $steam['name'] . "\' had an error while being removed.', 'red', 'index.php?p=commslist$pagelink', true);</script>";
     }
 }
 
@@ -211,11 +211,11 @@ if (isset($_GET["hideinactive"]) && $_GET["hideinactive"] == "true") { // hide
     //ShowBox('Show inactive bans', 'Inactive bans will be shown in the banlist.', 'green', 'index.php?p=banlist', true);
 }
 if (isset($_SESSION["hideinactive"])) {
-    $hidetext      = "Show";
+    $hidetext      = Lang::get('common.show');
     $hideinactive  = " AND RemoveType IS NULL";
     $hideinactiven = " WHERE RemoveType IS NULL";
 } else {
-    $hidetext      = "Hide";
+    $hidetext      = Lang::get('common.hide');
     $hideinactive  = "";
     $hideinactiven = "";
 }
@@ -466,16 +466,16 @@ while (!$res->EOF) {
     } else {
         $data['admin'] = stripslashes($res->fields['admin_name']);
     }
-    $data['reason'] = stripslashes($res->fields['ban_reason']);
+    $data['reason'] = LocalizeReason(stripslashes($res->fields['ban_reason']));
 
     if ($res->fields['ban_length'] > 0) {
         $data['ban_length'] = SecondsToString(intval($res->fields['ban_length']));
         $data['expires']    = Config::time($res->fields['ban_ends']);
     } else if ($res->fields['ban_length'] == 0) {
-        $data['ban_length'] = 'Permanent';
+        $data['ban_length'] = Lang::get('time.permanent');
         $data['expires']    = 'never';
     } else {
-        $data['ban_length'] = 'Session';
+        $data['ban_length'] = Lang::get('time.session');
         $data['expires']    = 'n/a';
     }
 
@@ -489,7 +489,7 @@ while (!$res->EOF) {
         } elseif ($res->fields['row_type'] == "U") {
             $data['ub_reason'] = "(Unbanned)";
         } else {
-            $data['ub_reason'] = "(Expired)";
+            $data['ub_reason'] = '(' . Lang::get('time.expired') . ')';
         }
 
         if (isset($res->fields['unban_reason']))
@@ -514,10 +514,10 @@ while (!$res->EOF) {
     if ($alrdybnd->fields['count'] == 0) {
         switch ($data['type']) {
             case 1:
-                $data['reban_link'] = CreateLinkR('<i class="fas fa-redo fa-lg"></i> ReMute', "index.php?p=admin&c=comms" . $pagelink . "&rebanid=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey'] . "#^0");
+                $data['reban_link'] = CreateLinkR('<i class="fas fa-redo fa-lg"></i> 重新禁麦', "index.php?p=admin&c=comms" . $pagelink . "&rebanid=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey'] . "#^0");
                 break;
             case 2:
-                $data['reban_link'] = CreateLinkR('<i class="fas fa-redo fa-lg"></i> ReGag', "index.php?p=admin&c=comms" . $pagelink . "&rebanid=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey'] . "#^0");
+                $data['reban_link'] = CreateLinkR('<i class="fas fa-redo fa-lg"></i> 重新禁言', "index.php?p=admin&c=comms" . $pagelink . "&rebanid=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey'] . "#^0");
                 break;
             default:
                 break;
@@ -527,7 +527,7 @@ while (!$res->EOF) {
     }
 
 
-    $data['edit_link'] = CreateLinkR('<i class="fas fa-edit fa-lg"></i> Edit Details', "index.php?p=admin&c=comms&o=edit" . $pagelink . "&id=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey']);
+    $data['edit_link'] = CreateLinkR('<i class="fas fa-edit fa-lg"></i> 编辑详情', "index.php?p=admin&c=comms&o=edit" . $pagelink . "&id=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey']);
 
     switch ($data['type']) {
         case 2:
@@ -540,7 +540,7 @@ while (!$res->EOF) {
             break;
     }
 
-    $data['delete_link'] = CreateLinkR('<i class="fas fa-trash fa-lg"></i> Delete Block', "#", "", "_self", false, "RemoveBlock('" . $res->fields['ban_id'] . "', '" . $_SESSION['banlist_postkey'] . "', '" . $pagelink . "', '" . $data['player'] . "', 0);return false;");
+    $data['delete_link'] = CreateLinkR('<i class="fas fa-trash fa-lg"></i> 删除禁言记录', "#", "", "_self", false, "RemoveBlock('" . $res->fields['ban_id'] . "', '" . $_SESSION['banlist_postkey'] . "', '" . $pagelink . "', '" . $data['player'] . "', 0);return false;");
 
     $data['server_id'] = $res->fields['ban_server'];
 
@@ -555,7 +555,7 @@ while (!$res->EOF) {
     if ($history_count > 1) {
         $data['prevoff_link'] = $history_count . " " . CreateLinkR("(search)", "index.php?p=commslist&searchText=" . $data['steamid'] . "&Submit");
     } else {
-        $data['prevoff_link'] = "No previous blocks";
+        $data['prevoff_link'] = Lang::get('ban.no_previous_blocks');
     }
 
     $mutes = "";
@@ -627,7 +627,7 @@ while (!$res->EOF) {
         $data['commentdata'] = $comment;
     }
 
-    $data['addcomment'] = CreateLinkR('<i class="fas fa-comment-dots fa-lg"></i> Add Comment', 'index.php?p=commslist&comment=' . $data['ban_id'] . '&ctype=C' . $pagelink);
+    $data['addcomment'] = CreateLinkR('<i class="fas fa-comment-dots fa-lg"></i> 添加评论', 'index.php?p=commslist&comment=' . $data['ban_id'] . '&ctype=C' . $pagelink);
     //-----------------------------------
     $data['counts']     = $delimiter . $mutes . $gags;
 
@@ -669,7 +669,7 @@ if ($BansEnd < $BanCount) {
 }
 
 //=================[ Start Layout ]==================================
-$ban_nav = 'displaying&nbsp;' . $BansStart . '&nbsp;-&nbsp;' . $BansEnd . '&nbsp;of&nbsp;' . $BanCount . '&nbsp;results';
+$ban_nav = Lang::get('pagination.displaying', ['start' => $BansStart, 'end' => $BansEnd, 'total' => $BanCount]);
 
 if (strlen($prev) > 0) {
     $ban_nav .= ' | <b>' . $prev . '</b>';

@@ -33,9 +33,9 @@ new AdminTabs([
 ], $userbank, $theme);
 
 if (isset($_GET['mode']) && $_GET['mode'] == "delete") {
-    echo "<script>ShowBox('Ban Deleted', 'The ban has been deleted from SourceBans', 'green', '', true);</script>";
+    echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('other.ban_deleted') . "', 'green', '', true);</script>";
 } elseif (isset($_GET['mode']) && $_GET['mode']=="unban") {
-    echo "<script>ShowBox('Player Unbanned', 'The Player has been unbanned from SourceBans', 'green', '', true);</script>";
+    echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('other.player_unbanned') . "', 'green', '', true);</script>";
 }
 
 if (isset($GLOBALS['IN_ADMIN'])) {
@@ -48,7 +48,7 @@ if (isset($_GET["rebanid"])) {
 } elseif (isset($_GET["blockfromban"])) {
     echo '<script type="text/javascript">xajax_PrepareBlockFromBan("' . $_GET["blockfromban"] . '");</script>';
 } elseif ((isset($_GET['action']) && $_GET['action'] == "pasteBan") && isset($_GET['pName']) && isset($_GET['sid'])) {
-    echo "<script type=\"text/javascript\">ShowBox('Loading..','<b>Loading...</b><br><i>Please Wait!</i>', 'blue', '', true);document.getElementById('dialog-control').setStyle('display', 'none');xajax_PasteBlock('" . (int) $_GET['sid'] . "', '" . addslashes($_GET['pName']) . "');</script>";
+    echo "<script type=\"text/javascript\">ShowBox('" . Lang::js('box.loading') . "', '<b>Loading...</b><br><i>Please Wait!</i>', 'blue', '', true);document.getElementById('dialog-control').setStyle('display', 'none');xajax_PasteBlock('" . (int) $_GET['sid'] . "', '" . addslashes($_GET['pName']) . "');</script>";
 }
 
 echo '<div id="admin-page-content">';

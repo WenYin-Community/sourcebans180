@@ -73,7 +73,7 @@ if (isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg'])) {
     $password = $GLOBALS['userbank']->GetProperty('password', $_GET['id']);
     $email    = $GLOBALS['userbank']->GetProperty('email', $_GET['id']);
     if ($_POST['wg'] > 0 && (empty($password) || empty($email))) {
-        echo '<script>ShowBox("Error", "Admins have to have a password and email set in order to get web permissions.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=' . $_GET['id'] . '\" title=\"Edit Admin Details\">Set the details</a> first and try again.", "red");</script>';
+        echo '<script>ShowBox("' . Lang::js('box.error') . '", "' . Lang::js('adm.need_pwd_email', ['aid' => $_GET['id']]) . '", "red");</script>';
     } else {
         if (isset($_POST['wg']) && $_POST['wg'] != "-2") {
             if ($_POST['wg'] == -1) {
@@ -139,7 +139,7 @@ if (isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg'])) {
             }
             echo '<script>ShowRehashBox("' . implode(",", $allservers) . '", "Admin updated", "The admin has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();</script>';
         } else {
-            echo '<script>ShowBox("Admin updated", "The admin has been updated successfully", "green", "index.php?p=admin&c=admins");TabToReload();</script>';
+            echo '<script>ShowBox("' . Lang::js('box.success') . '", "' . Lang::js('other.admin_updated2') . '", "green", "index.php?p=admin&c=admins");TabToReload();</script>';
         }
 
         $admname = $GLOBALS['db']->GetRow("SELECT user FROM `" . DB_PREFIX . "_admins` WHERE aid = ?", array(

@@ -238,7 +238,6 @@ if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_WEB_SETTINGS)) {
                     (?, 'bans.customreasons'),
                     (?, 'auth.maxlife'),
                     (?, 'auth.maxlife.remember'),
-                    (?, 'auth.maxlife.steam'),
                     (" . (int) $_POST['default_page'] . ", 'config.defaultpage')"
                     . $smtpConfigSql,
 
@@ -252,15 +251,14 @@ if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_WEB_SETTINGS)) {
                         $cureason,
                         $_POST['auth_maxlife'],
                         $_POST['auth_maxlife_remember'],
-                        $_POST['auth_maxlife_steam'],
                         ...$smtpConfig,
                 ]);
 
 ?>
-<script>ShowBox('Settings updated', 'The changes have been successfully updated', 'green', 'index.php?p=admin&c=settings');</script>
+<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('adm.settings_updated') . "', 'green', 'index.php?p=admin&c=settings');</script>
 <?php
             } else {
-                print "<script>ShowBox('Error', '$errors', 'red');</script>";
+                print "<script>ShowBox('" . Lang::js('box.error') . "', '$errors', 'red');</script>";
             }
         }
 
@@ -275,8 +273,6 @@ if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_WEB_SETTINGS)) {
 
             $adminrehash = (isset($_POST['enable_adminrehashing']) && $_POST['enable_adminrehashing'] == "on" ? 1 : 0);
 
-            $steamloginopt = (isset($_POST['enable_steamlogin']) && $_POST['enable_steamlogin'] == "on" ? 1 : 0);
-
             $publiccomments = (isset($_POST['enable_publiccomments']) && $_POST['enable_publiccomments'] == "on" ? 1 : 0);
 
             $edit = $GLOBALS['db']->Execute("REPLACE INTO " . DB_PREFIX . "_settings (`value`, `setting`) VALUES
@@ -285,12 +281,11 @@ if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_WEB_SETTINGS)) {
 											(" . (int) $groupban . ", 'config.enablegroupbanning'),
 											(" . (int) $friendsban . ", 'config.enablefriendsbanning'),
 											(" . (int) $adminrehash . ", 'config.enableadminrehashing'),
-											(" . (int) $publiccomments . ", 'config.enablepubliccomments'),
-											(" . (int) $steamloginopt . ", 'config.enablesteamlogin')");
+											(" . (int) $publiccomments . ", 'config.enablepubliccomments')");
 
 
 ?>
-<script>ShowBox('Settings updated', 'The changes have been successfully updated', 'green', 'index.php?p=admin&c=settings');</script>
+<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('adm.settings_updated') . "', 'green', 'index.php?p=admin&c=settings');</script>
 <?php
         }
     }
@@ -305,7 +300,6 @@ if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_WEB_SETTINGS)) {
     $theme->assign('config_dash_text', Config::get('dash.intro.text'));
     $theme->assign('auth_maxlife', Config::get('auth.maxlife'));
     $theme->assign('auth_maxlife_remember', Config::get('auth.maxlife.remember'));
-    $theme->assign('auth_maxlife_steam', Config::get('auth.maxlife.steam'));
     $theme->assign('config_bans_per_page', SB_BANS_PER_PAGE);
     $theme->assign('config_smtp', Config::getMulti([
         'smtp.host', 'smtp.user', 'smtp.port'
@@ -367,7 +361,6 @@ $('banlist_hideplayerips').checked = <?=(int)Config::getBool('banlist.hideplayer
 $('enable_groupbanning').checked = <?=(int)Config::getBool('config.enablegroupbanning');?>;
 $('enable_friendsbanning').checked = <?=(int)Config::getBool('config.enablefriendsbanning');?>;
 $('enable_adminrehashing').checked = <?=(int)Config::getBool('config.enableadminrehashing');?>;
-$('enable_steamlogin').checked = <?=(int)Config::getBool('config.enablesteamlogin');?>;
 $('enable_publiccomments').checked = <?=(int)Config::getBool('config.enablepubliccomments');?>;
 $('mail_verify_peer').checked = <?=(int)Config::getBool('smtp.verify_peer');?>;
 

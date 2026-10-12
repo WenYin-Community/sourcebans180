@@ -29,7 +29,7 @@ if (!defined("IN_SB")) {
     die();
 }
 if (!Config::getBool('config.enablesubmit')) {
-    print "<script>ShowBox('Error', 'This page is disabled. You should not be here.', 'red');</script>";
+    print "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('other.page_disabled') . "', 'red');</script>";
     PageDie();
 }
 if (!isset($_POST['subban']) || $_POST['subban'] != 1) {
@@ -91,7 +91,7 @@ if (!isset($_POST['subban']) || $_POST['subban'] != 1) {
 
 
     if (!$validsubmit) {
-        print "<script>ShowBox('Error', '$errors', 'red');</script>";
+        print "<script>ShowBox('" . Lang::js('box.error') . "', '$errors', 'red');</script>";
     }
 
     if ($validsubmit) {
@@ -188,9 +188,9 @@ if (!isset($_POST['subban']) || $_POST['subban'] != 1) {
                 ]);
             }
 
-            print "<script>ShowBox('Successful', 'Your submission has been added into the database, and will be reviewed by one of our admins.', 'green');</script>";
+            print "<script>ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('sub.added') . "', 'green');</script>";
         } else {
-            print "<script>ShowBox('Error', 'There was an error uploading your demo to the server. Please try again later.', 'red');</script>";
+            print "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('sub.demo_failed') . "', 'red');</script>";
             Log::add("e", "Demo Upload Failed", "A demo failed to upload for a submission from ($Email)");
         }
     }

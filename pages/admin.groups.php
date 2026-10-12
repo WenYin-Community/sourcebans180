@@ -24,8 +24,8 @@ if (!defined("IN_SB")) {
 global $userbank, $theme;
 
 new AdminTabs([
-    ['name' => 'List groups', 'permission' => ADMIN_OWNER|ADMIN_LIST_GROUPS],
-    ['name' => 'Add a group', 'permission' => ADMIN_OWNER|ADMIN_ADD_GROUP]
+    ['name' => '查看用户组', 'permission' => ADMIN_OWNER|ADMIN_LIST_GROUPS],
+    ['name' => '添加用户组', 'permission' => ADMIN_OWNER|ADMIN_ADD_GROUP]
 ], $userbank, $theme);
 
 ?>
@@ -71,7 +71,7 @@ for ($i = 0; $i < count($server_group_list); $i++) {
 }
 // List Group
 ?>
-<div class="tabcontent" id="List groups">
+<div class="tabcontent" id="查看用户组">
 <?php
 $theme->assign('permission_listgroups', $userbank->HasAccess(ADMIN_OWNER | ADMIN_LIST_GROUPS));
 $theme->assign('permission_editgroup', $userbank->HasAccess(ADMIN_OWNER | ADMIN_EDIT_GROUPS));
@@ -93,7 +93,7 @@ $theme->display('page_admin_groups_list.tpl');
 // Add Groups
 ?>
 </div>
-<div class="tabcontent" id="Add a group">
+<div class="tabcontent" id="添加用户组">
 <?php
 $theme->assign('permission_addgroup', $userbank->HasAccess(ADMIN_OWNER | ADMIN_ADD_GROUP));
 $theme->display('page_admin_groups_add.tpl');

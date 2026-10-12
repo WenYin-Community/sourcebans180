@@ -82,7 +82,7 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id'])) {
         if (empty($row) || !$row) {
             $fail++;
             if (!isset($_GET['bulk'])) {
-                echo "<script>ShowBox('Player Not Unbanned', 'The player was not unbanned, either already unbanned or not a valid ban.', 'red', 'index.php?p=banlist$pagelink');</script>";
+                echo "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('other.unban_failed') . "', 'red', 'index.php?p=banlist$pagelink');</script>";
                 PageDie();
             }
             continue;
@@ -114,19 +114,19 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id'])) {
         if ($res) {
             $type = $row['type'] == 0 ? $row['authid'] : $row['ip'];
             if (!isset($_GET['bulk'])) {
-                echo "<script>ShowBox('Player Unbanned', '" . $row['name'] . " ($type) has been unbanned from SourceBans.', 'green', 'index.php?p=banlist$pagelink');</script>";
+                echo "<script>ShowBox('" . Lang::js('box.success') . "', '" . $row['name'] . " ($type) has been unbanned from SourceBans.', 'green', 'index.php?p=banlist$pagelink');</script>";
             }
             Log::add("m", "Player Unbanned", "$row[name] ($type) has been unbanned.");
             $ucount++;
         } else {
             if (!isset($_GET['bulk'])) {
-                echo "<script>ShowBox('Player NOT Unbanned', 'There was an error unbanning " . $row['name'] . "', 'red', 'index.php?p=banlist$pagelink', true);</script>";
+                echo "<script>ShowBox('" . Lang::js('box.error') . "', 'There was an error unbanning " . $row['name'] . "', 'red', 'index.php?p=banlist$pagelink', true);</script>";
             }
             $fail++;
         }
     }
     if (isset($_GET['bulk'])) {
-        echo "<script>ShowBox('Players Unbanned', '$ucount players has been unbanned from SourceBans.<br>$fail failed.', 'green', 'index.php?p=banlist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.success') . "', '$ucount players has been unbanned from SourceBans.<br>$fail failed.', 'green', 'index.php?p=banlist$pagelink');</script>";
     }
 } elseif (isset($_GET['a']) && $_GET['a'] == "delete") {
     if ($_GET['key'] != $_SESSION['banlist_postkey']) {
@@ -134,7 +134,7 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id'])) {
     }
 
     if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_DELETE_BAN)) {
-        echo "<script>ShowBox('Error', 'You do not have access to this.', 'red', 'index.php?p=banlist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('other.no_access') . "', 'red', 'index.php?p=banlist$pagelink');</script>";
         PageDie();
     }
     //we have a multiple ban delete asking
@@ -181,19 +181,19 @@ if (isset($_GET['a']) && $_GET['a'] == "unban" && isset($_GET['id'])) {
         if ($res) {
             $type = $steam['type'] == 0 ? $steam['authid'] : $steam['ip'];
             if (!isset($_GET['bulk'])) {
-                echo "<script>ShowBox('Ban Deleted', 'The ban for \'" . $steam['name'] . "\' ($type) has been deleted from SourceBans', 'green', 'index.php?p=banlist$pagelink');</script>";
+                echo "<script>ShowBox('" . Lang::js('box.success') . "', 'The ban for \'" . $steam['name'] . "\' ($type) has been deleted from SourceBans', 'green', 'index.php?p=banlist$pagelink');</script>";
             }
             Log::add("m", "Ban Deleted", "Ban $steam[name] ($type) has been deleted.");
             $dcount++;
         } else {
             if (!isset($_GET['bulk'])) {
-                echo "<script>ShowBox('Ban NOT Deleted', 'The ban for \'" . $steam['name'] . "\' had an error while being removed.', 'red', 'index.php?p=banlist$pagelink', true);</script>";
+                echo "<script>ShowBox('" . Lang::js('box.error') . "', 'The ban for \'" . $steam['name'] . "\' had an error while being removed.', 'red', 'index.php?p=banlist$pagelink', true);</script>";
             }
             $fail++;
         }
     }
     if (isset($_GET['bulk'])) {
-        echo "<script>ShowBox('Players Deleted', '$dcount players has been deleted from SourceBans.<br>$fail failed.', 'green', 'index.php?p=banlist$pagelink');</script>";
+        echo "<script>ShowBox('" . Lang::js('box.success') . "', '$dcount players has been deleted from SourceBans.<br>$fail failed.', 'green', 'index.php?p=banlist$pagelink');</script>";
     }
 }
 
@@ -209,11 +209,11 @@ if (isset($_GET["hideinactive"]) && $_GET["hideinactive"] == "true") { // hide
     //ShowBox('Show inactive bans', 'Inactive bans will be shown in the banlist.', 'green', 'index.php?p=banlist', true);
 }
 if (isset($_SESSION["hideinactive"])) {
-    $hidetext      = "Show";
+    $hidetext      = Lang::get('common.show');
     $hideinactive  = " AND RemoveType IS NULL";
     $hideinactiven = " WHERE RemoveType IS NULL";
 } else {
-    $hidetext      = "Hide";
+    $hidetext      = Lang::get('common.hide');
     $hideinactive  = "";
     $hideinactiven = "";
 }
@@ -491,8 +491,8 @@ while (!$res->EOF) {
     } else {
         $data['admin'] = stripslashes($res->fields['admin_name']);
     }
-    $data['reason']     = stripslashes($res->fields['ban_reason']);
-    $data['ban_length'] = $res->fields['ban_length'] == 0 ? 'Permanent' : SecondsToString(intval($res->fields['ban_length']));
+    $data['reason']     = LocalizeReason(stripslashes($res->fields['ban_reason']));
+    $data['ban_length'] = $res->fields['ban_length'] == 0 ? Lang::get('time.permanent') : SecondsToString(intval($res->fields['ban_length']));
 
     // Custom "listtable_1_banned" & "listtable_1_permanent" addition entries
     // Comment the 14 lines below out if they cause issues
@@ -514,11 +514,11 @@ while (!$res->EOF) {
         $data['class']    = "listtable_1_unbanned";
 
         if ($res->fields['row_type'] == "D") {
-            $data['ub_reason'] = "(Deleted)";
+            $data['ub_reason'] = '(' . Lang::get('time.deleted') . ')';
         } elseif ($res->fields['row_type'] == "U") {
-            $data['ub_reason'] = "(Unbanned)";
+            $data['ub_reason'] = '(' . Lang::get('time.unbanned') . ')';
         } else {
-            $data['ub_reason'] = "(Expired)";
+            $data['ub_reason'] = '(' . Lang::get('time.expired') . ')';
         }
 
         $data['ureason'] = stripslashes($res->fields['unban_reason'] ?? '');
@@ -549,14 +549,14 @@ while (!$res->EOF) {
     } else {
         $data['reban_link'] = false;
     }
-    $data['blockcomm_link']  = CreateLinkR('<i class="fas fa-ban fa-lg"></i> Block Comms', "index.php?p=admin&c=comms" . $pagelink . "&blockfromban=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey'] . "#^0");
+    $data['blockcomm_link']  = CreateLinkR('<i class="fas fa-ban fa-lg"></i> 添加通讯封禁', "index.php?p=admin&c=comms" . $pagelink . "&blockfromban=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey'] . "#^0");
     $data['details_link']    = CreateLinkR('click', 'getdemo.php?type=B&id=' . $res->fields['ban_id']);
-    $data['groups_link']     = CreateLinkR('<i class="fas fa-users fa-lg"></i> Show Groups', "index.php?p=admin&c=bans&fid=" . $data['communityid'] . "#^4");
+    $data['groups_link']     = CreateLinkR('<i class="fas fa-users fa-lg"></i> 查看用户组', "index.php?p=admin&c=bans&fid=" . $data['communityid'] . "#^4");
     $data['friend_ban_link'] = CreateLinkR('<i class="fas fa-trash fa-lg"></i> Ban Friends', '#', '', '_self', false, "BanFriendsProcess('" . $data['communityid'] . "','" . $data['player'] . "');return false;");
-    $data['edit_link']       = CreateLinkR('<i class="fas fa-edit fa-lg"></i> Edit Details', "index.php?p=admin&c=bans&o=edit" . $pagelink . "&id=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey']);
+    $data['edit_link']       = CreateLinkR('<i class="fas fa-edit fa-lg"></i> 编辑详情', "index.php?p=admin&c=bans&o=edit" . $pagelink . "&id=" . $res->fields['ban_id'] . "&key=" . $_SESSION['banlist_postkey']);
 
-    $data['unban_link']  = CreateLinkR('<i class="fas fa-undo fa-lg"></i> Unban', "#", "", "_self", false, "UnbanBan('" . $res->fields['ban_id'] . "', '" . $_SESSION['banlist_postkey'] . "', '" . $pagelink . "', '" . $data['player'] . "', 1, false);return false;");
-    $data['delete_link'] = CreateLinkR('<i class="fas fa-trash fa-lg"></i> Delete Ban', "#", "", "_self", false, "RemoveBan('" . $res->fields['ban_id'] . "', '" . $_SESSION['banlist_postkey'] . "', '" . $pagelink . "', '" . $data['player'] . "', 0, false);return false;");
+    $data['unban_link']  = CreateLinkR('<i class="fas fa-undo fa-lg"></i> 解除封禁', "#", "", "_self", false, "UnbanBan('" . $res->fields['ban_id'] . "', '" . $_SESSION['banlist_postkey'] . "', '" . $pagelink . "', '" . $data['player'] . "', 1, false);return false;");
+    $data['delete_link'] = CreateLinkR('<i class="fas fa-trash fa-lg"></i> 删除封禁', "#", "", "_self", false, "RemoveBan('" . $res->fields['ban_id'] . "', '" . $_SESSION['banlist_postkey'] . "', '" . $pagelink . "', '" . $data['player'] . "', 0, false);return false;");
 
 
     $data['server_id'] = $res->fields['ban_server'];
@@ -572,7 +572,7 @@ while (!$res->EOF) {
     if ($res->fields['history_count'] > 1) {
         $data['prevoff_link'] = $res->fields['history_count'] . " " . CreateLinkR("(search)", "index.php?p=banlist&searchText=" . ($data['type'] == 0 ? $data['steamid'] : $res->fields['ban_ip']) . "&Submit");
     } else {
-        $data['prevoff_link'] = "No previous bans";
+        $data['prevoff_link'] = Lang::get('ban.no_previous_bans');
     }
 
 
@@ -593,7 +593,7 @@ while (!$res->EOF) {
     if ($res->fields['demo_count'] == 0) {
         $data['demo_available'] = false;
         $data['demo_quick']     = 'N/A';
-        $data['demo_link']      = CreateLinkR('<i class="fas fa-video-slash fa-lg"></i> No Demos', "#");
+        $data['demo_link']      = CreateLinkR('<i class="fas fa-video-slash fa-lg"></i> ' . Lang::get('ban.no_demos'), "#");
     } else {
         $data['demo_available'] = true;
         $data['demo_quick']     = CreateLinkR('Demo', "getdemo.php?type=B&id=" . $data['ban_id']);
@@ -668,7 +668,7 @@ while (!$res->EOF) {
     }
 
 
-    $data['addcomment'] = CreateLinkR('<i class="fas fa-comment-dots fa-lg"></i> Add Comment', 'index.php?p=banlist&comment=' . $data['ban_id'] . '&ctype=B' . $pagelink);
+    $data['addcomment'] = CreateLinkR('<i class="fas fa-comment-dots fa-lg"></i> 添加评论', 'index.php?p=banlist&comment=' . $data['ban_id'] . '&ctype=B' . $pagelink);
     //-----------------------------------
 
     $data['ub_reason']   = (isset($data['ub_reason']) ? $data['ub_reason'] : "");
@@ -709,7 +709,7 @@ if ($BansEnd < $BanCount) {
 }
 
 //=================[ Start Layout ]==================================
-$ban_nav = 'displaying&nbsp;' . $BansStart . '&nbsp;-&nbsp;' . $BansEnd . '&nbsp;of&nbsp;' . $BanCount . '&nbsp;results';
+$ban_nav = Lang::get('pagination.displaying', ['start' => $BansStart, 'end' => $BansEnd, 'total' => $BanCount]);
 
 if (strlen($prev) > 0) {
     $ban_nav .= ' | <b>' . $prev . '</b>';

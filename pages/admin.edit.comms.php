@@ -27,11 +27,11 @@ global $theme;
 new AdminTabs([], $userbank, $theme);
 
 if ($_GET['key'] != $_SESSION['banlist_postkey']) {
-    echo '<script>ShowBox("Error", "Possible hacking attempt (URL Key mismatch)!", "red", "index.php?p=admin&c=comms");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.hacking_attempt') . ', "red", "index.php?p=admin&c=comms");</script>';
     PageDie();
 }
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    echo '<script>ShowBox("Error", "No block id specified. Please only follow links!", "red", "index.php?p=admin&c=comms");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.no_block_id') . ', "red", "index.php?p=admin&c=comms");</script>';
     PageDie();
 }
 
@@ -41,7 +41,7 @@ $res = $GLOBALS['db']->GetRow("SELECT bid, ba.type, ba.authid, ba.name, created,
     WHERE bid = {$_GET['id']}");
 
 if (!$userbank->HasAccess(ADMIN_OWNER | ADMIN_EDIT_ALL_BANS) && (!$userbank->HasAccess(ADMIN_EDIT_OWN_BANS) && $res[8] != $userbank->GetAid()) && (!$userbank->HasAccess(ADMIN_EDIT_GROUP_BANS) && $res->fields['gid'] != $userbank->GetProperty('gid'))) {
-    echo '<script>ShowBox("Error", "You don\'t have access to this!", "red", "index.php?p=admin&c=comms");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.no_access') . ', "red", "index.php?p=admin&c=comms");</script>';
     PageDie();
 }
 
@@ -140,12 +140,12 @@ if (isset($_POST['name'])) {
                 . " Before: length ({$lengthrev->fields['length']}), type ({$lengthrev->fields['type']});"
                 . " Now: length ({$_POST['banlength']}), type ({$_POST['type']}).");
         }
-        echo '<script>ShowBox("Block updated", "The block has been updated successfully", "green", "index.php?p=commslist' . $pagelink . '");</script>';
+        echo '<script>ShowBox(' . Lang::js('box.success') . ', ' . Lang::js('other.block_updated') . ', "green", "index.php?p=commslist' . $pagelink . '");</script>';
     }
 }
 
 if (!$res) {
-    echo '<script>ShowBox("Error", "There was an error getting details. Maybe the block has been deleted?", "red", "index.php?p=commslist' . $pagelink . '");</script>';
+    echo '<script>ShowBox(' . Lang::js('box.error') . ', ' . Lang::js('other.block_get_failed') . ', "red", "index.php?p=commslist' . $pagelink . '");</script>';
 }
 
 $theme->assign('ban_name', $res['name']);
