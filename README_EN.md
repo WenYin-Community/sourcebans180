@@ -91,6 +91,118 @@ chmod -R a+w cache templates_c demos images/maps images/games
 
 Open the site root in a browser and complete the setup wizard. **After installation, delete the `install/` and `updater/` directories** — the application refuses to start while they exist.
 
+## Installing the Game-Server Plugin (SourceMod)
+
+The web panel only manages data. **Your game servers need the companion SourceMod plugin installed** to talk to the panel (writing bans, syncing admins, reporting comms blocks, etc.).
+
+This repository **ships pre-compiled plugins** under `sourcebans-pp-1.8.0.sourcemod_plugin/` — no compilation required.
+
+### Prerequisites
+
+Install these on the game server first:
+
+- **MetaMod: Source** — <https://www.sourcemm.net/>
+- **SourceMod >= 1.10** — <https://www.sourcemod.net/>
+
+### Installation
+
+1. **Copy the plugin files to the game server**
+
+   Merge the entire `sourcebans-pp-1.8.0.sourcemod_plugin/common/addons/` directory into the game server's `addons/` directory (alongside MetaMod):
+
+   ```bash
+   # Example for CS:GO — adjust the path to your setup
+   cp -r sourcebans-pp-1.8.0.sourcemod_plugin/common/addons/* \
+         /path/to/game-server/csgo/addons/
+   ```
+
+   The resulting layout should be:
+
+   ```
+   addons/sourcemod/
+   ├── plugins/       # sbpp_*.smx plugins
+   ├── translations/  # Plugin localization strings
+   └── configs/sourcebans/
+       ├── sourcebans.cfg              # Core configuration
+       ├── sourcecomms.cfg             # Communications-block configuration
+       ├── sb_admins.cfg               # Admin accounts (generated from DB — do not edit)
+       ├── sb_admin_groups.cfg         # Admin groups (generated from DB — do not edit)
+       └── sourcesleuth_whitelist.cfg  # Alt-account detection whitelist
+   ```
+
+2. **Edit `sourcebans.cfg`**
+
+   At minimum, change these two values:
+
+   ```
+   "Website"     "https://your-panel-url/"   // Site players visit to protest / view bans
+   "ServerID"    "1"                         // This server's ID in the panel (see Servers page)
+   ```
+
+   Key options:
+
+   | Option | Description |
+   |---|---|
+   | `Website` | Panel URL, shown to players in `sm_ban` messages |
+   | `ServerID` | Server ID — **must match the server's ID in the panel**, or data won't line up |
+   | `DatabasePrefix` | Table prefix; must match `DB_PREFIX` in `config.php` (default `sb`) |
+   | `AutoAddServer` | Auto-register this server in the panel (`2` with RCON / `1` without RCON / `0` disabled) |
+   | `EnableAdmins` | Enable the plugin's admin part (sync admins from the DB) |
+   | `RequireSiteLogin` | Require admins to log into the website once |
+   | `PrintCheckOnConnect` | Notify admins when a player with ban/comms history joins |
+   | `BanTime` / `BanReasons` / `HackingReasons` | Ban duration presets and reason menus (localize as needed) |
+
+3. **Provide the database credentials**
+
+   The plugin connects to the database **directly** (not through the web panel). Edit `addons/sourcemod/configs/databases.cfg` and add:
+
+   ```
+   "sourcebans"
+   {
+       "driver"    "mysql"
+       "host"      "your-db-host"
+       "database"  "sourcebans"
+       "user"      "db-user"
+       "pass"      "db-password"
+   }
+   ```
+
+   > ⚠️ This connection is configured **separately** from the panel's `config.php`. Both must point to the same database and table prefix.
+
+4. **Restart the game server**, or run `sm plugins reload sbpp_main`.
+
+### Plugin Overview
+
+| Plugin | Purpose |
+|---|---|
+| `sbpp_main.smx` | Core plugin — ban DB read/write and admin sync. **Required** |
+| `sbpp_comms.smx` | Communications blocks (mute/gag) backing the panel's Comms module |
+| `sbpp_checker.smx` | Checks a connecting player's ban and comms-block history |
+| `sbpp_admcfg.smx` | Syncs admin configuration from the database to the server |
+| `sbpp_report.smx` | In-game player reporting |
+| `sbpp_sleuth.smx` | Alt-account / smurf detection (uses `sourcesleuth_whitelist.cfg`) |
+
+### Common Commands
+
+| Command | Description |
+|---|---|
+| `sm_ban <player> <minutes> <reason>` | Ban a player (`0` = permanent) |
+| `sm_unban <SteamID>` | Remove a ban |
+| `sm_addban <minutes> <SteamID> <reason>` | Pre-ban an offline player |
+| `sm_banlist` | Show the ban list |
+| `sm_gag <player> <minutes> <reason>` | Gag |
+| `sm_mute <player> <minutes> <reason>` | Mute |
+| `sm_silence <player> <minutes> <reason>` | Gag + mute |
+| `sm_ungag` / `sm_unmute` / `sm_unsilence` | Lift the corresponding block |
+| `sm_rehashadmins` | Re-fetch admin config from the database |
+| `sm_plugins` | Check plugin load status |
+
+> Command access is governed by SourceMod admin flags on the server together with the panel's permission model. See the panel's Admin and Group Management pages.
+
+### Compiling the Plugins (Optional)
+
+The bundled `.smx` files are pre-compiled, so this is normally unnecessary. To build them yourself, see the official SourceMod guide [Compiling SourceMod Plugins](https://wiki.alliedmods.net/Compiling_SourceMod_Plugins).
+
 ## Directory Layout
 
 ```
@@ -119,6 +231,8 @@ sourcebans180/
 ├── images/                 # Maps, game icons, flags, static assets
 ├── data/                   # GeoIP database (GeoLite2)
 ├── demos/                  # Uploaded demo recordings
+├── sourcebans-pp-1.8.0.sourcemod_plugin/   # Bundled game-server SourceMod plugin pack
+│   └── common/addons/sourcemod/            #   Plugins, translations, configs (see above)
 ├── cache/                  # Smarty cache (must be writable)
 └── templates_c/            # Smarty compiled templates (must be writable)
 ```

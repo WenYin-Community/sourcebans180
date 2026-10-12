@@ -91,6 +91,118 @@ chmod -R a+w cache templates_c demos images/maps images/games
 
 浏览器访问站点根目录，按安装向导完成初始化。**安装完成后必须删除 `install/` 与 `updater/` 目录**，否则程序会拒绝启动。
 
+## 安装游戏服务端插件（SourceMod）
+
+Web 面板只负责管理数据，**游戏服务器需要安装配套的 SourceMod 插件**才能与面板通信（写入封禁、同步管理员、上报通讯封禁等）。
+
+本仓库已在 `sourcebans-pp-1.8.0.sourcemod_plugin/` 内**附赠预编译好的插件包**，无需自行编译。
+
+### 前置依赖
+
+游戏服务器需先安装：
+
+- **MetaMod: Source** —— <https://www.sourcemm.net/>
+- **SourceMod >= 1.10** —— <https://www.sourcemod.net/>
+
+### 安装步骤
+
+1. **复制插件文件到游戏服务端**
+
+   将 `sourcebans-pp-1.8.0.sourcemod_plugin/common/addons/` 目录**整个合并**到游戏服务端的 `addons/` 目录（与 MetaMod 同级），即：
+
+   ```bash
+   # 以 CS:GO 为例，路径按实际服务端调整
+   cp -r sourcebans-pp-1.8.0.sourcemod_plugin/common/addons/* \
+         /path/to/game-server/csgo/addons/
+   ```
+
+   合并后的目录结构应为：
+
+   ```
+   addons/sourcemod/
+   ├── plugins/       # sbpp_*.smx 插件
+   ├── translations/  # 插件多语言文本
+   └── configs/sourcebans/
+       ├── sourcebans.cfg              # 核心配置
+       ├── sourcecomms.cfg             # 通讯封禁配置
+       ├── sb_admins.cfg               # 管理员账号（插件从数据库拉取后生成，勿手改）
+       ├── sb_admin_groups.cfg         # 管理员组（同上，自动生成）
+       └── sourcesleuth_whitelist.cfg  # 多账号检测白名单
+   ```
+
+2. **编辑 `sourcebans.cfg`**
+
+   至少修改以下两项，其余按需调整：
+
+   ```
+   "Website"     "https://你的面板地址/"   // 玩家跳转申诉/查看封禁的站点地址
+   "ServerID"    "1"                       // 本服务器在面板中的 ID（后台「服务器」页可查）
+   ```
+
+   关键配置项说明：
+
+   | 配置项 | 说明 |
+   |---|---|
+   | `Website` | 面板地址，用于 `sm_ban` 提示玩家去何处申诉 |
+   | `ServerID` | 服务器 ID，**必须与面板中该服务器的 ID 一致**，否则数据无法对应 |
+   | `DatabasePrefix` | 数据库表前缀，需与 `config.php` 中 `DB_PREFIX` 一致（默认 `sb`） |
+   | `AutoAddServer` | 是否自动在面板注册本服务器（`2` 含 RCON / `1` 不含 RCON / `0` 不自动添加） |
+   | `EnableAdmins` | 是否启用插件管理员部分（从数据库同步管理员） |
+   | `RequireSiteLogin` | 是否要求管理员先登录一次网站 |
+   | `PrintCheckOnConnect` | 有封禁/通讯封禁历史的玩家进服时是否提示管理员 |
+   | `BanTime` / `BanReasons` / `HackingReasons` | 封禁时长档位、封禁理由菜单（请按需本地化） |
+
+3. **填写数据库连接信息**
+
+   插件需要自行连接数据库（**不是**通过 Web 面板中转）。编辑 `addons/sourcemod/configs/databases.cfg`，新增：
+
+   ```
+   "sourcebans"
+   {
+       "driver"    "mysql"
+       "host"      "你的数据库地址"
+       "database"  "sourcebans"
+       "user"      "数据库用户名"
+       "pass"      "数据库口令"
+   }
+   ```
+
+   > ⚠️ 该连接信息与 Web 面板 `config.php` 是**两套独立配置**，请确保两者指向同一数据库、同一表前缀。
+
+4. **重启游戏服务器**，或使用 `sm plugins reload sbpp_main` 重载。
+
+### 插件说明
+
+| 插件 | 作用 |
+|---|---|
+| `sbpp_main.smx` | 核心插件，负责封禁数据库读写、管理员同步，**必装** |
+| `sbpp_comms.smx` | 通讯封禁（禁言 / 禁语音），对应面板的「通讯封禁」模块 |
+| `sbpp_checker.smx` | 玩家进服时检查其封禁与通讯封禁记录 |
+| `sbpp_admcfg.smx` | 从数据库同步管理员配置到服务端 |
+| `sbpp_report.smx` | 游戏内玩家举报功能 |
+| `sbpp_sleuth.smx` | 多账号 / 小号检测（配合 `sourcesleuth_whitelist.cfg` 白名单） |
+
+### 常用指令
+
+| 指令 | 说明 |
+|---|---|
+| `sm_ban <玩家> <时长分钟> <理由>` | 封禁玩家（时长 `0` 为永久） |
+| `sm_unban <SteamID>` | 解除封禁 |
+| `sm_addban <时长> <SteamID> <理由>` | 对离线玩家预先封禁 |
+| `sm_banlist` | 查看封禁列表 |
+| `sm_gag <玩家> <时长> <理由>` | 禁言 |
+| `sm_mute <玩家> <时长> <理由>` | 禁麦 |
+| `sm_silence <玩家> <时长> <理由>` | 同时禁言 + 禁麦 |
+| `sm_ungag` / `sm_unmute` / `sm_unsilence` | 解除对应通讯封禁 |
+| `sm_rehashadmins` | 重新从数据库拉取管理员配置 |
+| `sm_plugins` | 查看插件加载状态 |
+
+> 指令权限由服务端 SourceMod 管理员标志与面板权限体系共同控制，详见面板后台「管理员」与「组管理」。
+
+### 编译插件（可选）
+
+本仓库附带的为预编译 `.smx`，一般无需编译。若需自行编译，详见 SourceMod 官方指南 [Compiling SourceMod Plugins](https://wiki.alliedmods.net/Compiling_SourceMod_Plugins)。
+
 ## 目录结构
 
 ```
@@ -119,6 +231,8 @@ sourcebans180/
 ├── images/                 # 地图、游戏图标、国旗等静态资源
 ├── data/                   # GeoIP 数据库（GeoLite2）
 ├── demos/                  # 上传的演示录像
+├── sourcebans-pp-1.8.0.sourcemod_plugin/   # 附赠的游戏服务端 SourceMod 插件包
+│   └── common/addons/sourcemod/            #   插件、翻译、配置（安装方式见上文）
 ├── cache/                  # Smarty 缓存（需可写）
 └── templates_c/            # Smarty 编译产物（需可写）
 ```
