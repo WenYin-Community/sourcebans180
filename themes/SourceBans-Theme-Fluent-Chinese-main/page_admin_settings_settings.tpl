@@ -90,21 +90,6 @@
         </div>
 
         <div class="margin-bottom:half">
-            <label for="auth_maxlife_steam" class="form-label form-label:bottom">
-                验证令牌最大有效期（Steam 登录） <span class="text:italic">（分钟）</span>
-            </label>
-
-
-            <input type="text" TABINDEX=4 class="form-input form-full" id="auth_maxlife_steam" name="auth_maxlife_steam"
-                value="{$auth_maxlife_steam}" />
-
-            <div class="form-desc">
-                <!-- Max lifetime for auth tokens via steam login. -->
-                通过 steam 登录的验证令牌的最长有效时间
-            </div>
-        </div>
-
-        <div class="margin-bottom:half">
             <input type="checkbox" TABINDEX=6 name="config_debug" class="form-check" id="config_debug" />
 
             <label for="config_debug" class="form-label form-label:left">

@@ -100,23 +100,6 @@
         </div>
 
         <div class="margin-bottom:half">
-            <input type="checkbox" name="enable_steamlogin" class="form-check" id="enable_steamlogin" />
-
-            <label for="enable_steamlogin" class="form-label form-label:left">
-                <!-- Enable Normal Login -->
-                启用正常登录
-            </label>
-
-            <div class="form-desc">
-                <!-- Check this box, if you want to enable the Normal login option on the login form. -->
-                如果要在登录表单上启用 “正常登录” 选项，请选中此框。
-            </div>
-
-            <div id="enable_steamlogin.msg" class="message message:error margin-top:half" style="display: none;">
-            </div>
-        </div>
-
-        <div class="margin-bottom:half">
             <input type="checkbox" name="enable_publiccomments" class="form-check" id="enable_publiccomments" />
 
             <label for="enable_publiccomments" class="form-label form-label:left">

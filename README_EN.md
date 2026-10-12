@@ -25,7 +25,7 @@ An **admin, ban, and communications-block management system** for Source engine 
 | Server management | Server CRUD, live status and player queries, **RCON remote console** |
 | Permissions | Two-layer model: web group permissions + SourceMod flags, granular down to individual admin actions |
 | Admin backend | Admin, admin-group, server-access, and mod management |
-| Public frontend | Multi-criteria ban-list search, player profiles, Steam quick login, account and password recovery |
+| Public frontend | Multi-criteria ban-list search, player profiles, account and password recovery |
 | Notifications | Email delivery (ban notices, protest replies) with SMTP support |
 | Misc | Demo upload/download, map thumbnails, game icons, GeoIP country lookup, audit logging |
 
@@ -214,7 +214,7 @@ sourcebans180/
 ├── getdemo.php             # Demo download endpoint
 ├── config.php.template     # Database configuration template
 ├── includes/               # Core libraries
-│   ├── auth/               #   JWT sessions + Steam OpenID login
+│   ├── auth/               #   JWT sessions
 │   ├── security/           #   Crypto utilities
 │   ├── SteamID/            #   SteamID conversion and parsing
 │   ├── Mail/               #   Mail delivery wrapper

@@ -47,7 +47,7 @@ index.php → init.php（引导：输入过滤→常量→config.php→autoload�
 |---|---|
 | `pages/` | 页面控制器。命名：`page.<名>.php`（前台）、`admin.<名>.php`（后台）、`pages/core/` 为页头/导航/页尾 |
 | `themes/` | Smarty 模板。现有 `default` 与 `SourceBans-Theme-Fluent-Chinese-main`（中文主题）。主题由设置项 `config.theme` 切换 |
-| `includes/` | 核心类库：`CUserManager.php`（用户/权限）、`Config.php`（设置存取）、`Log.php`、`auth/`（JWT + Steam OpenID）、`security/Crypto.php`、`SteamID/` |
+| `includes/` | 核心类库：`CUserManager.php`（用户/权限）、`Config.php`（设置存取）、`Log.php`、`auth/`（JWT 会话）、`security/Crypto.php`、`SteamID/` |
 | `configs/` | `version.json`；`permissions/web.json` 与 `sourcemod.json` 在引导时被展开为 `ADMIN_*` 常量 |
 | `scripts/` | 前端 JS（mootools、xajax、sourcebans.js） |
 | `data/` | GeoLite2-Country.mmdb（GeoIP 库） |
