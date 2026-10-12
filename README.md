@@ -300,7 +300,43 @@ index.php → init.php → includes/page-builder.php::route()
 内置两套主题，后台「设置」中通过 `config.theme` 切换：
 
 - `default` —— 上游默认主题
-- `SourceBans-Theme-Fluent-Chinese-main` —— 中文本地化 Fluent 风格主题
+- `SourceBans-Theme-Fluent-Chinese-main` —— 中文本地化 Fluent 风格主题（紫色设计系统）
+
+### 中文主题的紫色设计系统
+
+`SourceBans-Theme-Fluent-Chinese-main` 已从上游蓝色 Fluent 改造为**紫色主题**，全部配色收敛到 CSS 变量（`style/scss/global.scss` 根令牌块）：
+
+| 令牌 | 值 | 用途 |
+|---|---|---|
+| `--brand--base` | `#6f42c1` | 主色 |
+| `--brand--gradient` | `160deg` 三段紫渐变 | 顶栏、卡片头、主按钮 |
+| `--brand--deep` / `--brand--deepest` | `#3b2266` / `#1e1033` | 标题字、深色描边 |
+| `--brand--tint` ~ `--brand--tint-3` | 浅紫阶 | 表头、悬停、分隔 |
+| `--theme-background` | `#fcfafd` | 页面底色 |
+| `--border--radius` / `--border--radius-pill` | `8px` / `46px` | 圆角规范 |
+
+**深色模式**通过 `[data-theme='dark']` 属性选择器**重定义同一批 CSS 变量**实现，因此样式只要取值走变量即自动适配，无需另写覆盖规则。
+
+**样式组织结构**（`style/scss/`）：`global.scss` 为主入口与令牌定义，`framework/` 为基础组件（按钮、表格、输入框等），`__*.scss` 为按区域划分的模块，`_*.scss` 为独立补充（右键菜单、消息、社交图标）。
+
+### 前端结构调整
+
+- **顶栏合并为一栏**：原 `core/header.tpl` 的 `<header>` 已移除，logo / 搜索框 / 工具图标 / 登录态统一由 `core/navbar.tpl` 的 `.layout_topBar` 渲染（紫色渐变底）。
+- **站点 logo**：位于 `images/logos/`，路径由设置项 `template.logo` 指定；当前为白字 + 深紫描边 + TF2 徽标的透明 PNG。
+
+> 修改 SCSS 后需**手动编译**（见下方），并清空 `templates_c/`。
+
+### 编译主题样式
+
+本机不依赖系统 sass，统一借容器编译：
+
+```bash
+cd themes/SourceBans-Theme-Fluent-Chinese-main/style
+podman run --rm --network host -v "$PWD":/src -w /src docker.io/library/node:24-alpine \
+  sh -c "npx --yes sass@1.77.8 global.scss global.css --style=expanded"
+```
+
+> ⚠️ 不要加 `--no-source-map`：`style/global.css.map` 已被 git 跟踪，用该参数会导致 map 被删除且不再生成。
 
 修改模板后若未生效，请清空 `templates_c/` 目录。
 

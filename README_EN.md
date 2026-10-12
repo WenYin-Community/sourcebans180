@@ -298,7 +298,43 @@ index.php → init.php → includes/page-builder.php::route()
 Two themes ship with the panel; switch between them via `config.theme` in the backend settings:
 
 - `default` — upstream default theme
-- `SourceBans-Theme-Fluent-Chinese-main` — Chinese-localized Fluent-style theme
+- `SourceBans-Theme-Fluent-Chinese-main` — Chinese-localized Fluent-style theme (purple design system)
+
+### Purple Design System
+
+The Chinese theme has been reworked from the upstream blue Fluent palette into a **purple** system. All colors are centralized as CSS variables in the root token block of `style/scss/global.scss`:
+
+| Token | Value | Usage |
+|---|---|---|
+| `--brand--base` | `#6f42c1` | Primary color |
+| `--brand--gradient` | 3-stop purple gradient at `160deg` | Top bar, card headers, primary buttons |
+| `--brand--deep` / `--brand--deepest` | `#3b2266` / `#1e1033` | Heading text, dark outlines |
+| `--brand--tint` ~ `--brand--tint-3` | Light purple scale | Table headers, hover states, dividers |
+| `--theme-background` | `#fcfafd` | Page background |
+| `--border--radius` / `--border--radius-pill` | `8px` / `46px` | Corner radius scale |
+
+**Dark mode** is implemented by redefining the same set of CSS variables under the `[data-theme='dark']` attribute selector, so any style that reads those variables adapts automatically — no separate override rules needed.
+
+**Stylesheet layout** (`style/scss/`): `global.scss` is the entry point and token definition; `framework/` holds base components (buttons, tables, inputs, etc.); `__*.scss` are region-specific modules; `_*.scss` are standalone additions (context menu, messages, social icons).
+
+### Front-end Structural Changes
+
+- **Single merged top bar**: the `<header>` block in `core/header.tpl` has been removed. The logo, search boxes, tool icons and login state are now all rendered by `.layout_topBar` in `core/navbar.tpl` (purple gradient background).
+- **Site logo**: stored in `images/logos/`, path configured via the `template.logo` setting; currently a transparent PNG with white lettering, deep-purple outline and a TF2 badge.
+
+> After editing SCSS you must **compile manually** (see below) and clear `templates_c/`.
+
+### Compiling Theme Styles
+
+No system `sass` is required — compilation runs in a container:
+
+```bash
+cd themes/SourceBans-Theme-Fluent-Chinese-main/style
+podman run --rm --network host -v "$PWD":/src -w /src docker.io/library/node:24-alpine \
+  sh -c "npx --yes sass@1.77.8 global.scss global.css --style=expanded"
+```
+
+> ⚠️ Do **not** add `--no-source-map`: `style/global.css.map` is tracked by git, and that flag would delete it without regenerating.
 
 If template edits don't take effect, clear the `templates_c/` directory.
 

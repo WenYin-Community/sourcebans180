@@ -1,10 +1,11 @@
 # SourceBans++ Fluent 主题中文版
 
-基于 Fluent Design 设计语言的 SourceBans++ 网页主题中文汉化版。
+基于 Fluent Design 设计语言的 SourceBans++ 网页主题中文汉化版，已改造为**紫色设计系统**。
 
 ## ✨ 特性
 
 - 🎨 Fluent Design + iOS + Android + Google设计风格融合
+- 💜 **紫色设计系统**：配色全部收敛为 CSS 变量（`style/scss/global.scss` 根令牌块），主色 `#6f42c1`
 - 🇨🇳 完整的简体中文翻译（所有 53 个 TPL 模板文件）
   - ✅ 导航栏、页脚、搜索框
   - ✅ 封禁列表、语音封禁列表
@@ -13,8 +14,37 @@
   - ✅ 设置面板、账户管理
   - ✅ 错误提示、更新程序页面
 - 📱 响应式布局，支持移动端
-- 🌙 支持深色模式
+- 🌙 支持深色模式（通过 `[data-theme='dark']` 重定义 CSS 变量，样式自动适配）
 - ⚡ 现代化 UI 界面
+
+## 🏗️ 本分支的结构调整
+
+- **顶栏合并为一栏**：原 `core/header.tpl` 的 `<header>` 块已移除，logo / 搜索框 / 工具图标 / 登录态统一由 `core/navbar.tpl` 的 `.layout_topBar` 渲染（紫色渐变底）。
+- **站点 logo**：`images/logos/` 下的透明 PNG，路径由设置项 `template.logo` 指定。
+- **右键菜单样式**：`style/scss/_contextmenu.scss`（该组件此前无任何样式）。
+
+## 🎨 样式组织结构（`style/scss/`）
+
+| 文件 | 用途 |
+|---|---|
+| `global.scss` | 主入口 + CSS 变量令牌定义 |
+| `framework/*.scss` | 基础组件（按钮、表格、输入框、弹窗、消息、字体等） |
+| `__*.scss` | 按区域划分的模块（header / nav / layout / footer / admin / dark / fix / old） |
+| `_*.scss` | 独立补充（contextmenu / messages-custom / socialmedia） |
+
+## 🔧 编译样式
+
+本机无需安装 sass，统一借容器编译（**必须带 `--style=expanded`**）：
+
+```bash
+cd style
+podman run --rm --network host -v "$PWD":/src -w /src docker.io/library/node:24-alpine \
+  sh -c "npx --yes sass@1.77.8 global.scss global.css --style=expanded"
+```
+
+> ⚠️ 不要加 `--no-source-map`：`style/global.css.map` 已被 git 跟踪，用该参数会导致 map 被删除且不再生成。
+>
+> 编译后请清空项目根目录的 `templates_c/`。
 
 ## 📋 环境要求
 

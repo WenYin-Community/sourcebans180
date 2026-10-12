@@ -18,7 +18,7 @@
 | 模板 | **Smarty 5.8**（`\Smarty` 命名空间；编译产物固定在项目根 `templates_c/`，缓存目录 `cache/`） |
 | 数据库 | MySQL / MariaDB，**双数据访问层并存**：ADOdb 5.22（`$GLOBALS['db']`，历史代码）+ 自研 PDO 封装（`includes/Database.php`，`$GLOBALS['PDO']`，新代码优先使用） |
 | AJAX | xajax 0.5（`includes/sb-callback.php` 注册回调，前端 `scripts/xajax.js`） |
-| 前端 | mootools + 原生 JS（`scripts/sourcebans.js`），SCSS 源码在 `themes/<主题>/css/` |
+| 前端 | mootools + 原生 JS（`scripts/sourcebans.js`），SCSS 源码在 `themes/<主题>/style/scss/`，编译产物为同目录 `global.css` |
 | 国际化 | 自研轻量 i18n（`includes/i18n/Lang.php` + `zh_CN.php` / `en_US.php`，键数须保持一致） |
 | 依赖管理 | Composer，**vendor 目录定制为 `includes/vendor`（不入库，`.gitignore` 第 4 行）** |
 | 关键库 | lcobucci/jwt **5.6**（会话）、symfony/mailer **7.x**（邮件）、maxmind-db/reader（GeoIP）、xpaw/php-source-query-class（RCON/服务器查询） |
@@ -88,7 +88,10 @@ index.php → init.php（引导：输入过滤→常量→config.php→autoload�
 4. **输入过滤**：`init.php` 已对 `$_GET/$_POST/$_COOKIE` 做 `FILTER_SANITIZE_SPECIAL_CHARS` 全局过滤；输出到模板仍需转义，SQL 一律走预处理，严禁拼接用户输入。
 5. **AJAX**：新增异步动作在 `includes/sb-callback.php` 注册 xajax 函数，前端经 `scripts/sourcebans.js` 调用；不要另起 REST 端点。
 6. **模板**：改页面优先改 `themes/default` 下的 `.tpl`；中文主题需同步检查。`templates_c/` 是产物，改模板不生效时先清空它。
-7. **日志**：业务操作日志走 `Log::add()`（写库），不要 `var_dump`/`echo` 调试到生产页面。
+7. **国际化**：新增界面文案一律走 `Lang::get()` / 模板 `{$lang.xxx}` 或 `{"xxx"|lang}`，**不硬编码中英文字面量**。
+   - 语言键须在 `zh_CN.php` 与 `en_US.php` **同时补齐**（键数保持一致）。
+   - 需要嵌进 JS 单引号字面量时用 **`Lang::js()`**（只转义 `\`、`\r`、`\n`、`'`，中文与已有 HTML 标签原样保留）——典型场景是 `includes/sb-callback.php` 里拼接的 xajax 脚本。
+8. **日志**：业务操作日志走 `Log::add()`（写库），不要 `var_dump`/`echo` 调试到生产页面。
 
 ## 测试与验证
 
@@ -97,6 +100,20 @@ index.php → init.php（引导：输入过滤→常量→config.php→autoload�
 - **不要用静态扫描替代实测**：曾用 token 扫描在 Smarty 5 中找出 20 处「隐式 nullable」，但实测零告警 —— 该告警仅在参数类型所属类**尚未定义**时触发。
 - 涉及权限/封禁写入的改动，用非 owner 账号回归验证越权防护。
 - 前端无构建链：`scripts/*.js` 直接编辑；主题 SCSS 需手动编译为 CSS 后才生效。
+
+### 主题 SCSS 编译
+
+本机未安装 sass，统一借容器编译（**必须带 `--style=expanded`**）：
+
+```bash
+cd themes/<主题>/style
+podman run --rm --network host -v "$PWD":/src -w /src docker.io/library/node:24-alpine \
+  sh -c "npx --yes sass@1.77.8 global.scss global.css --style=expanded"
+```
+
+> ⚠️ 不要加 `--no-source-map`：`style/global.css.map` 是 git 跟踪文件，
+> 一旦用该参数编译，map 会被删除且不再生成。`--style=expanded` 同时保证产物为可读的展开 CSS。
+> 编译后记得清 `templates_c/`。
 
 ## 安全红线
 
