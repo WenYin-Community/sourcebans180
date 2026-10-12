@@ -5,3 +5,4 @@ includes/vendor
 templates_c
 db/
 .workbuddy/
+.local-test/
