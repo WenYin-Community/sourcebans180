@@ -240,7 +240,7 @@ class xajax
 	{
 		$sVar = 'b' . ucfirst($name);
 		if (array_key_exists($sVar, get_object_vars($this))) {
-			$this->$sVar = (boolean)$value;
+			$this->$sVar = (bool)$value;
 		}
 		else {
 			trigger_error("The flag \"$name\" could not be found", E_USER_ERROR);
@@ -1253,7 +1253,7 @@ class xajax
 			}
 			else if ($this->sEncoding == "ISO-8859-1")
 			{
-				$sFuncToUse = "utf8_decode";
+				$sFuncToUse = "mb_convert_encoding";
 			}
 			else
 			{
@@ -1268,13 +1268,9 @@ class xajax
 					{
 						$sValue = iconv("UTF-8", $this->sEncoding.'//TRANSLIT', $sValue);
 					}
-					else if ($sFuncToUse == "mb_convert_encoding")
-					{
-						$sValue = mb_convert_encoding($sValue, $this->sEncoding, "UTF-8");
-					}
 					else
 					{
-						$sValue = utf8_decode($sValue);
+						$sValue = mb_convert_encoding($sValue, $this->sEncoding, "UTF-8");
 					}
 				}
 			}
@@ -1307,9 +1303,6 @@ function xajaxErrorHandler($errno, $errstr, $errfile, $errline)
 	}
 	else if ($errno == E_USER_ERROR) {
 		$errTypeStr = "USER FATAL ERROR";
-	}
-	else if ($errno == E_STRICT) {
-		return;
 	}
 	else {
 		$errTypeStr = "UNKNOWN: $errno";
