@@ -14,26 +14,51 @@
 
 | 层 | 技术 |
 |---|---|
-| 语言 | PHP >= 8.1（本机 CLI 为 PHP 8.5） |
-| 模板 | Smarty ~4.3（编译产物在 `templates_c/`，缓存目录 `cache/`） |
+| 语言 | **PHP >= 8.4**（已完整适配 8.4 / 8.5，**不兼容 8.3 及以下**；本机与容器均为 PHP 8.5） |
+| 模板 | **Smarty 5.8**（`\Smarty` 命名空间；编译产物固定在项目根 `templates_c/`，缓存目录 `cache/`） |
 | 数据库 | MySQL / MariaDB，**双数据访问层并存**：ADOdb 5.22（`$GLOBALS['db']`，历史代码）+ 自研 PDO 封装（`includes/Database.php`，`$GLOBALS['PDO']`，新代码优先使用） |
 | AJAX | xajax 0.5（`includes/sb-callback.php` 注册回调，前端 `scripts/xajax.js`） |
 | 前端 | mootools + 原生 JS（`scripts/sourcebans.js`），SCSS 源码在 `themes/<主题>/css/` |
-| 依赖管理 | Composer，**vendor 目录定制为 `includes/vendor`** |
-| 关键库 | lcobucci/jwt（会话）、symfony/mailer（邮件）、maxmind-db/reader（GeoIP）、xpaw/php-source-query-class（RCON/服务器查询） |
+| 国际化 | 自研轻量 i18n（`includes/i18n/Lang.php` + `zh_CN.php` / `en_US.php`，键数须保持一致） |
+| 依赖管理 | Composer，**vendor 目录定制为 `includes/vendor`（不入库，`.gitignore` 第 4 行）** |
+| 关键库 | lcobucci/jwt **5.6**（会话）、symfony/mailer **7.x**（邮件）、maxmind-db/reader（GeoIP）、xpaw/php-source-query-class（RCON/服务器查询） |
+
+**PHP 8.4+ 移植要点（勿回退）**
+- 运行环境必须为 PHP 8.4+；**不得**为此添加向后兼容层或屏蔽报错（用户明确要求）。
+- Smarty 5：分隔符属性已私有化，须用 `setLeftDelimiter()` / `setRightDelimiter()`；`compile_dir` 默认是**相对路径**，会随 CWD 漂移，故 `init.php` 显式 `setCompileDir(ROOT.'templates_c/')`。
+- lcobucci/jwt 5.x：`Builder` / `Parser` / `ValidationData` 已移除；`Token` 变接口，`Token\Plain` **不再实现 `__toString()`**，须用 `->toString()`；所有 JWT 异常实现 `Lcobucci\JWT\Exception` 标记接口，是统一 catch 点。
+- `SB_SECRET_KEY` 走 `InMemory::base64Encoded()`，jwt 5.x 严格校验**标准 Base64**（URL-safe 的 `-`/`_` 会抛异常导致登录 500）。
+- 排查用 `.local-test/php-overrides.ini` 的 `error_reporting` 已设为纯 `E_ALL`，**不得**重新加回 `~E_DEPRECATED` 之类的抑制。
 
 ## 环境准备
 
 ```bash
-composer install                              # 依赖装到 includes/vendor
+composer install                              # 依赖装到 includes/vendor（必需！vendor 不入库）
 cp config.php.template config.php             # 然后填入 DB_*、STEAMAPIKEY、SB_SECRET_KEY 等
 gunzip -c db/<备份>.sql.gz | mysql -u root sourcebans   # 可选：导入生产数据快照
 chmod -R a+w cache templates_c demos images/maps images/games   # 运行期可写目录
 ```
 
 - `config.php` 被 `.gitignore` 忽略，**绝不提交**（含数据库口令与 JWT 密钥）。
-- 本地调试可用 `php -S localhost:8080` 起服务；`init.php` 仅对非 localhost 强制检查 install/updater 目录。
+- **本机已卸载 PHP / nginx / composer**，统一用容器运行：`sbpp-nginx`（host 网络，监听 **8082**）、`sbpp-php`（`wenyinos-php:8.5-fpm`，PHP 8.5，9000）、`sbpp-mysql`。项目目录挂载到容器 `/var/www/html`。
+  - 跑 `composer` 需借官方镜像：`podman run --rm --network host -v <proj>:/app -w /app docker.io/library/composer:latest <子命令>`（容器内无 composer）。
+- 本地调试也可用 `php -S localhost:8080` 起服务（需自备 PHP）；`init.php` 仅对非 localhost 强制检查 install/updater 目录。
 - `sb_debug_connection.php` 是本地自加的数据库连通性调试脚本，非上游文件。
+
+### 本地验证清单（改完代码后跑）
+
+```bash
+# 1) 语法
+podman exec sbpp-php php -l /var/www/html/<文件>
+# 2) 全路由冒烟（18 条 p=/p=&c= 路由，检查非 5xx 且响应体无 PHP 报错）
+curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:8082/index.php?p=home"
+# 3) 查看诊断（E_ALL 全开，应零 Deprecated / Warning）
+podman logs --tail 50 sbpp-php
+# 4) 改了模板后清编译缓存
+podman exec sbpp-php sh -c 'rm -f /var/www/html/templates_c/*.php'
+```
+
+> ⚠️ `podman logs` 在容器 restart 后仍返回**完整历史缓冲**。要判断"本次"是否产生告警，请用 `grep -n` 定位最后一条 PHP 诊断的行号，再用 `tail -n +N` 切其后内容。时间过滤（`--since`）不可靠 —— 容器是 UTC，宿主是 GMT+8。
 
 ## 目录结构与请求生命周期
 
@@ -67,10 +92,10 @@ index.php → init.php（引导：输入过滤→常量→config.php→autoload�
 
 ## 测试与验证
 
-- 仓库**没有**单元测试、CI、linter 配置。改动后的最低验证：
-  - `php -l <改动文件>` 语法检查；
-  - 浏览器走通对应路由（`index.php?p=...`）；
-  - 涉及权限/封禁写入的改动，用非 owner 账号回归验证越权防护。
+- 仓库**没有**单元测试、CI、linter 配置。改动后的最低验证见上文「本地验证清单」（容器语法检查 + 全路由冒烟 + `podman logs` 查诊断）。
+- **诊断基线为「零」**：`.local-test/php-overrides.ini` 已设 `error_reporting = E_ALL`，任何 Deprecated / Warning / Notice 都应视为新引入的问题。
+- **不要用静态扫描替代实测**：曾用 token 扫描在 Smarty 5 中找出 20 处「隐式 nullable」，但实测零告警 —— 该告警仅在参数类型所属类**尚未定义**时触发。
+- 涉及权限/封禁写入的改动，用非 owner 账号回归验证越权防护。
 - 前端无构建链：`scripts/*.js` 直接编辑；主题 SCSS 需手动编译为 CSS 后才生效。
 
 ## 安全红线
@@ -79,8 +104,18 @@ index.php → init.php（引导：输入过滤→常量→config.php→autoload�
 - 不改数据库表结构（`sb_*` 表）除非明确授权；schema 变更须与线上 SourceMod 插件侧兼容。
 - 认证（`includes/auth/`）、密码哈希（`SB_NEW_SALT`）、`security/Crypto.php` 属高危区，改动前必须与主人确认。
 - `exportbans.php`、`getdemo.php` 是公开入口，改动时注意未授权访问面。
+- **Steam OpenID 登录已彻底移除**，不得重新引入（属已知攻击面）。Steam API 仅用于读取玩家资料 / Steam 组信息。
+- 排查代码时**禁止**用 `error_reporting` 抑制（`~E_DEPRECATED` 等）掩盖问题；反例见本次移植中暴露的 3 个真 Bug（畸形 JWT 致 500、`CheckVersion()` 在 null 上取下标、Smarty 编译目录随 CWD 漂移）。
 
 ## Git 现状
 
-- 仓库已 `git init` 但**尚无任何提交**（全部文件未跟踪）。首次提交前建议先确认 `.gitignore` 覆盖完整。
-- 提交约定：一次一件事，信息简洁，提交前检查无密钥/备份文件混入。
+- 远程：`https://github.com/WenYin-Community/sourcebans180`（origin，默认分支 `main`，走 https，`gh` CLI 已登录 `wenyinos`）。
+- `includes/vendor`、`config.php`、`db/`、`data/*.mmdb`、`.workbuddy/`、`.local-test/` 均被 gitignore，**不入库**。
+- 提交约定：一次一件事，信息简洁；**按逻辑域拆分而非按目录机械切分**（同一目录可能混两类改动，需 `git reset -q` 后精确 `git add <文件>`）。
+- 推送前敏感信息闸门（两道）：
+  ```bash
+  git diff origin/main..HEAD --name-only | grep -E 'config\.php$|\.env|local-test|\.workbuddy|db/|\.mmdb'
+  git diff origin/main..HEAD --unified=0 | grep '^+' | grep -iE 'password\s*=|secret\s*=|api[_-]?key\s*='
+  ```
+- 改动历史：i18n 汉化、Steam OpenID 移除、PHP 8.4+ 完整移植（详见 `.workbuddy/memory/` 日志）。
+- ⚠️ `.gitignore` 曾漏掉 `.local-test/`（内含本地 MySQL 口令与生产库名），已补至第 8 行；**新增任何本地脚手架前先确认忽略规则**。

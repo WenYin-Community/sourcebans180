@@ -2,7 +2,8 @@
 
 [![License: CC BY-NC-SA 3.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%203.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/3.0/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![PHP](https://img.shields.io/badge/PHP-%3E%3D8.1-8892bf.svg)](https://www.php.net/)
+[![PHP](https://img.shields.io/badge/PHP-%3E%3D8.4-8892bf.svg)](https://www.php.net/)
+[![Smarty](https://img.shields.io/badge/Smarty-5.8-yellow.svg)](https://www.smarty.net/)
 
 [English](README_EN.md) | **简体中文**
 
@@ -27,15 +28,34 @@
 | 管理员后台 | 管理员 / 管理员组 / 服务器访问权限 / 模块（Mod）管理 |
 | 用户前台 | 封禁列表多条件检索、玩家资料、个人账户与密码找回 |
 | 通知 | 邮件发送（封禁通知、申诉回复），支持 SMTP |
+| 国际化 | 内置轻量 i18n 子系统，界面文案支持中 / 英双语切换 |
 | 其他 | 演示录像（demo）上传与下载、地图缩略图、游戏图标、GeoIP 国家定位、操作日志审计 |
+
+> 🔐 **安全说明**：本分支**已彻底移除 Steam OpenID 快捷登录**（该功能依赖外部重定向，属潜在攻击面）。管理员一律通过本地账号密码登录，会话使用 JWT 令牌。Steam Web API 仅用于**读取**玩家资料与 Steam 组信息，不参与任何身份认证流程。
 
 ## 环境要求
 
-- **PHP >= 8.1**（推荐 8.2+），需启用扩展：`pdo_mysql`、`openssl`、`mbstring`、`json`
+- **PHP >= 8.4**（本分支已完整适配 PHP 8.4 / 8.5，**不兼容 PHP 8.3 及以下**）
+  - 需启用扩展：`pdo_mysql`、`openssl`、`mbstring`、`json`、`sodium`、`xml`、`iconv`
+  - ⚠️ `sodium` 为 JWT 依赖 `lcobucci/jwt 5.x` 的硬性要求
 - **MySQL / MariaDB**（5.7+ / 10.2+）
-- **Composer 2.x**
+- **Composer 2.x**（用于安装依赖）
 - Web 服务器：Nginx / Apache（需支持 PHP-FPM 或 mod_php）
 - 游戏服务端需安装 **SourceBans++ SourceMod 插件**（与本 Web 面板配套）
+
+> 📌 **本项目已放弃向后兼容**：可运行于 PHP 8.4+，不再支持 8.3 及更早版本，代码中未保留任何旧版兼容层。
+
+## 主要依赖
+
+| 组件 | 版本 | 用途 |
+|---|---|---|
+| [Smarty](https://www.smarty.net/) | 5.8 | 模板引擎（已迁移至 `\Smarty` 命名空间） |
+| [lcobucci/jwt](https://github.com/lcobucci/jwt) | 5.6 | JWT 会话令牌 |
+| [ADOdb](https://adodb.org/) | 5.22 | 历史代码使用的数据访问层 |
+| [Symfony Mailer](https://symfony.com/doc/current/mailer.html) | 7.x | 邮件发送 |
+| [MaxMind DB Reader](https://github.com/maxmind/MaxMind-DB-Reader-php) | 1.14 | GeoIP 国家定位 |
+| [xPaw SourceQuery](https://github.com/xPaw/PHP-Source-Query) | dev-master | 游戏服务器查询与 RCON |
+
 
 ## 安装部署
 
@@ -47,7 +67,24 @@ cd sourcebans180
 composer install
 ```
 
+> ⚠️ **`composer install` 是必需的，不能跳过。**
+> `includes/vendor/` 未纳入版本控制，仓库中不包含任何第三方依赖。若跳过此步，程序会在启动时直接报错终止（`Compose autoload not found!`）。
+>
 > 依赖会被安装到 `includes/vendor/`（`composer.json` 中已通过 `vendor-dir` 定制，非默认路径）。
+>
+> 若目标机无法访问 Packagist，可先在联网机器执行 `composer install`，再将整个 `includes/vendor/` 目录拷贝过去。
+
+### 版本升级须知（旧版 → 本分支）
+
+从旧版本（PHP 8.1 / Smarty 4）升级到本分支时，**必须重新安装依赖**，并清空模板编译缓存：
+
+```bash
+composer install                # 升级 Smarty 4 → 5、jwt 4 → 5 等
+rm -f templates_c/*.php         # 旧编译产物由 Smarty 4 生成，与新版本不兼容
+```
+
+> PHP 版本低于 8.4 的环境**无法运行**本分支，请先升级运行时。
+
 
 ### 2. 配置数据库连接
 
@@ -64,10 +101,21 @@ define('DB_PASS', '');                     // 数据库口令
 define('DB_NAME', 'sourcebans');           // 数据库名
 define('DB_PREFIX', 'sb');                 // 表前缀
 define('DB_PORT', '3306');                 // 端口
-define('STEAMAPIKEY', '');                 // Steam Web API Key（用于玩家资料）
+define('STEAMAPIKEY', '');                 // Steam Web API Key（用于玩家资料与 Steam 组封禁）
 define('SB_NEW_SALT', '$5$');              // 密码盐，生产环境务必修改
-define('SB_SECRET_KEY', '');               // JWT 签名密钥，务必填写足够长的随机串
+define('SB_SECRET_KEY', '');               // JWT 签名密钥，必须是 Base64 编码的随机串
 ```
+
+> ⚠️ **`SB_SECRET_KEY` 必须是合法的标准 Base64 字符串。**
+> JWT 库（`lcobucci/jwt 5.x`）会**严格校验**该值：字符集仅允许 `A-Z a-z 0-9 + /`，须以 `=` 正确补齐，解码后不得为空。
+> 若使用了 URL-safe 变体（含 `-` 或 `_`）或长度不合法，**登录时会出现 500 错误**。
+>
+> 推荐用下面的命令生成一个 32 字节密钥：
+>
+> ```bash
+> php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
+> ```
+
 
 > 🔒 `config.php` 已被 `.gitignore` 忽略，**切勿提交到任何仓库**。
 
@@ -214,10 +262,12 @@ sourcebans180/
 ├── getdemo.php             # 演示录像下载接口
 ├── config.php.template     # 数据库配置模板
 ├── includes/               # 核心类库
-│   ├── auth/               #   JWT 会话认证
+│   ├── auth/               #   JWT 会话认证（lcobucci/jwt 5.x）
+│   ├── i18n/               #   国际化：Lang.php + zh_CN / en_US 语言包
 │   ├── security/           #   Crypto 加密工具
 │   ├── SteamID/            #   SteamID 转换与解析
-│   ├── Mail/               #   邮件发送封装
+│   ├── Mail/               #   邮件发送封装（Symfony Mailer）
+│   ├── vendor/             #   Composer 依赖（不入库，需 composer install）
 │   ├── Database.php        #   PDO 封装（新代码推荐使用）
 │   ├── CUserManager.php    #   用户与权限管理
 │   ├── Config.php          #   站点设置存取
@@ -225,7 +275,7 @@ sourcebans180/
 │   ├── sb-callback.php     #   xajax AJAX 回调注册
 │   └── page-builder.php    #   路由与页面构建
 ├── pages/                  # 页面控制器（page.* 前台 / admin.* 后台）
-├── themes/                 # Smarty 模板主题
+├── themes/                 # Smarty 5 模板主题
 ├── configs/                # 版本信息与权限定义
 ├── scripts/                # 前端 JS
 ├── images/                 # 地图、游戏图标、国旗等静态资源
@@ -233,8 +283,8 @@ sourcebans180/
 ├── demos/                  # 上传的演示录像
 ├── sourcebans-pp-1.8.0.sourcemod_plugin/   # 附赠的游戏服务端 SourceMod 插件包
 │   └── common/addons/sourcemod/            #   插件、翻译、配置（安装方式见上文）
-├── cache/                  # Smarty 缓存（需可写）
-└── templates_c/            # Smarty 编译产物（需可写）
+├── cache/                  # Smarty 缓存目录（需可写）
+└── templates_c/            # Smarty 编译产物（需可写；升级后须清空）
 ```
 
 **请求生命周期**：
@@ -257,10 +307,11 @@ index.php → init.php → includes/page-builder.php::route()
 ## 安全建议
 
 - 妥善保管 `config.php`，确保其不在 Web 可直接下载的路径中泄露。
-- `SB_SECRET_KEY` 必须为长随机字符串；`SB_NEW_SALT`（密码盐）生产环境必须修改。
+- `SB_SECRET_KEY` 必须为**标准 Base64 编码**的长随机串；`SB_NEW_SALT`（密码盐）生产环境必须修改。
 - 站点务必启用 **HTTPS**，JWT 令牌与登录凭据不可走明文。
 - 定期更新 PHP 与依赖，关注上游安全公告。
 - 后台仅对可信管理员开放，避免将管理入口暴露于公网。
+- 生产环境请关闭 `DEBUG_MODE`，并确保 `display_errors` 为 `Off`、`log_errors` 为 `On`。
 
 ## 许可证
 

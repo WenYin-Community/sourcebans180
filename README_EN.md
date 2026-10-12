@@ -2,7 +2,8 @@
 
 [![License: CC BY-NC-SA 3.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%203.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/3.0/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![PHP](https://img.shields.io/badge/PHP-%3E%3D8.1-8892bf.svg)](https://www.php.net/)
+[![PHP](https://img.shields.io/badge/PHP-%3E%3D8.4-8892bf.svg)](https://www.php.net/)
+[![Smarty](https://img.shields.io/badge/Smarty-5.8-yellow.svg)](https://www.smarty.net/)
 
 **English** | [简体中文](README.md)
 
@@ -27,15 +28,33 @@ An **admin, ban, and communications-block management system** for Source engine 
 | Admin backend | Admin, admin-group, server-access, and mod management |
 | Public frontend | Multi-criteria ban-list search, player profiles, account and password recovery |
 | Notifications | Email delivery (ban notices, protest replies) with SMTP support |
+| Internationalization | Built-in lightweight i18n subsystem; UI strings switchable between Chinese and English |
 | Misc | Demo upload/download, map thumbnails, game icons, GeoIP country lookup, audit logging |
+
+> 🔐 **Security note**: This fork has **completely removed Steam OpenID login** (it relied on an external redirect and represented a potential attack surface). Administrators sign in exclusively with local credentials; sessions use JWT tokens. The Steam Web API is used only to **read** player profiles and Steam group info — it plays no part in authentication.
 
 ## Requirements
 
-- **PHP >= 8.1** (8.2+ recommended) with extensions: `pdo_mysql`, `openssl`, `mbstring`, `json`
+- **PHP >= 8.4** (this branch is fully ported to PHP 8.4 / 8.5 and is **incompatible with PHP 8.3 and below**)
+  - Required extensions: `pdo_mysql`, `openssl`, `mbstring`, `json`, `sodium`, `xml`, `iconv`
+  - ⚠️ `sodium` is a hard requirement of the JWT library `lcobucci/jwt 5.x`
 - **MySQL / MariaDB** (5.7+ / 10.2+)
-- **Composer 2.x**
+- **Composer 2.x** (for installing dependencies)
 - Web server: Nginx / Apache (PHP-FPM or mod_php)
 - The **SourceBans++ SourceMod plugin** installed on your game servers (companion to this web panel)
+
+> 📌 **No backward compatibility**: This fork runs on PHP 8.4+ only. PHP 8.3 and earlier are no longer supported, and no legacy compatibility layer is retained in the codebase.
+
+## Key Dependencies
+
+| Component | Version | Purpose |
+|---|---|---|
+| [Smarty](https://www.smarty.net/) | 5.8 | Template engine (migrated to the `\Smarty` namespace) |
+| [lcobucci/jwt](https://github.com/lcobucci/jwt) | 5.6 | JWT session tokens |
+| [ADOdb](https://adodb.org/) | 5.22 | Data-access layer used by legacy code |
+| [Symfony Mailer](https://symfony.com/doc/current/mailer.html) | 7.x | Email delivery |
+| [MaxMind DB Reader](https://github.com/maxmind/MaxMind-DB-Reader-php) | 1.14 | GeoIP country lookup |
+| [xPaw SourceQuery](https://github.com/xPaw/PHP-Source-Query) | dev-master | Game-server queries and RCON |
 
 ## Installation
 
@@ -47,7 +66,23 @@ cd sourcebans180
 composer install
 ```
 
+> ⚠️ **`composer install` is mandatory and cannot be skipped.**
+> `includes/vendor/` is not tracked in version control — the repository ships no third-party dependencies. If you skip this step, the application aborts at startup with `Compose autoload not found!`.
+>
 > Dependencies are installed into `includes/vendor/` — the `vendor-dir` is customized in `composer.json`, not the default location.
+>
+> If the target machine cannot reach Packagist, run `composer install` on a networked machine first, then copy the whole `includes/vendor/` directory over.
+
+### Upgrading from an older version
+
+When moving from an older release (PHP 8.1 / Smarty 4) to this branch, you **must reinstall dependencies** and clear the template compile cache:
+
+```bash
+composer install                # upgrades Smarty 4 -> 5, jwt 4 -> 5, etc.
+rm -f templates_c/*.php         # old compiled artifacts come from Smarty 4 and are incompatible
+```
+
+> Environments running PHP below 8.4 **cannot** run this branch — upgrade the runtime first.
 
 ### 2. Configure the database connection
 
@@ -64,10 +99,21 @@ define('DB_PASS', '');                     // Database password
 define('DB_NAME', 'sourcebans');           // Database name
 define('DB_PREFIX', 'sb');                 // Table prefix
 define('DB_PORT', '3306');                 // Port
-define('STEAMAPIKEY', '');                 // Steam Web API key (for player profiles)
+define('STEAMAPIKEY', '');                 // Steam Web API key (player profiles & Steam group bans)
 define('SB_NEW_SALT', '$5$');              // Password salt — change this in production
-define('SB_SECRET_KEY', '');               // JWT signing secret — use a long random string
+define('SB_SECRET_KEY', '');               // JWT signing secret — must be Base64-encoded
 ```
+
+> ⚠️ **`SB_SECRET_KEY` must be a valid standard Base64 string.**
+> The JWT library (`lcobucci/jwt 5.x`) validates it **strictly**: only `A-Z a-z 0-9 + /` are allowed, padding with `=` is required, and the decoded value must not be empty.
+> A URL-safe variant (containing `-` or `_`) or an invalid length will cause a **500 error on login**.
+>
+> Generate a 32-byte key with:
+>
+> ```bash
+> php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
+> ```
+
 
 > 🔒 `config.php` is ignored by `.gitignore`. **Never commit it to any repository.**
 
@@ -214,10 +260,12 @@ sourcebans180/
 ├── getdemo.php             # Demo download endpoint
 ├── config.php.template     # Database configuration template
 ├── includes/               # Core libraries
-│   ├── auth/               #   JWT sessions
+│   ├── auth/               #   JWT session authentication (lcobucci/jwt 5.x)
+│   ├── i18n/               #   Internationalization: Lang.php + zh_CN / en_US packs
 │   ├── security/           #   Crypto utilities
 │   ├── SteamID/            #   SteamID conversion and parsing
-│   ├── Mail/               #   Mail delivery wrapper
+│   ├── Mail/               #   Mail delivery wrapper (Symfony Mailer)
+│   ├── vendor/             #   Composer dependencies (not tracked; run composer install)
 │   ├── Database.php        #   PDO wrapper (preferred for new code)
 │   ├── CUserManager.php    #   User and permission management
 │   ├── Config.php          #   Site settings storage
@@ -225,7 +273,7 @@ sourcebans180/
 │   ├── sb-callback.php     #   xajax AJAX callback registration
 │   └── page-builder.php    #   Routing and page assembly
 ├── pages/                  # Page controllers (page.* public / admin.* backend)
-├── themes/                 # Smarty template themes
+├── themes/                 # Smarty 5 template themes
 ├── configs/                # Version info and permission definitions
 ├── scripts/                # Front-end JS
 ├── images/                 # Maps, game icons, flags, static assets
@@ -233,8 +281,8 @@ sourcebans180/
 ├── demos/                  # Uploaded demo recordings
 ├── sourcebans-pp-1.8.0.sourcemod_plugin/   # Bundled game-server SourceMod plugin pack
 │   └── common/addons/sourcemod/            #   Plugins, translations, configs (see above)
-├── cache/                  # Smarty cache (must be writable)
-└── templates_c/            # Smarty compiled templates (must be writable)
+├── cache/                  # Smarty cache directory (must be writable)
+└── templates_c/            # Smarty compiled templates (must be writable; clear after upgrades)
 ```
 
 **Request lifecycle**:
@@ -257,10 +305,11 @@ If template edits don't take effect, clear the `templates_c/` directory.
 ## Security Recommendations
 
 - Keep `config.php` safe and ensure it is never downloadable from a public web path.
-- `SB_SECRET_KEY` must be a long random string; change `SB_NEW_SALT` (password salt) in production.
+- `SB_SECRET_KEY` must be a long random string in **standard Base64**; change `SB_NEW_SALT` (password salt) in production.
 - Always serve the panel over **HTTPS** — JWT tokens and login credentials must not travel in plaintext.
 - Keep PHP and dependencies up to date and watch for upstream security advisories.
 - Restrict backend access to trusted administrators only; avoid exposing the admin area publicly.
+- In production, disable `DEBUG_MODE`, keep `display_errors` set to `Off` and `log_errors` set to `On`.
 
 ## License
 
