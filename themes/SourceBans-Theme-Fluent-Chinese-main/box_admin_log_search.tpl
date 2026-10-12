@@ -1,0 +1,65 @@
+<div class="layout_box margin-bottom">
+<div class="table padding">
+<div class="table box">
+<div align="center">
+    <table width="80%" cellpadding="0" class="listtable" cellspacing="0">
+        <tr class="sea_open">
+            <td width="2%" height="16" class="listtable_top" colspan="3" style="text-align: center;"><b>高级搜索<b> (点击)</td>
+        </tr>
+        <tr>
+            <td>
+                <div class="panel">
+                    <table width="100%" cellpadding="0" class="listtable" cellspacing="0">
+                        <tr>
+                            <td class="listtable_1" width="8%" align="center"><input id="admin_" name="search_type" type="radio" value="radiobutton"></td>
+                            <td class="listtable_1" width="26%">管理员</td>
+                            <td class="listtable_1" width="66%">
+                                <select class="select" id="admin" onmouseup="$('admin_').checked = true" style="width: 100%;">
+                                    {foreach from=$admin_list item="admin"}
+                                    <option label="{$admin.user}" value="{$admin.aid}">{$admin.user}</option>
+                                    {/foreach}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="listtable_1" align="center"><input id="message_" name="search_type" type="radio" value="radiobutton"></td>
+                            <td class="listtable_1">消息</td>
+                            <td class="listtable_1"><input class="textbox" type="text" id="message" value="" onmouseup="$('message_').checked = true" style="width:  93%;"></td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="listtable_1" ><input id="date_" type="radio" name="search_type" value="radiobutton"></td>
+                            <td class="listtable_1" >日期</td>
+                            <td class="listtable_1" >
+                                <input class="textbox" type="text" id="day" value="DD" onmouseup="$('date_').checked = true" maxlength="2" style="width: 46px;"> .
+                                <input class="textbox" type="text" id="month" value="MM" onmouseup="$('date_').checked = true" maxlength="2" style="width: 46px;"> .
+                                <input class="textbox" type="text" id="year" value="YYYY" onmouseup="$('date_').checked = true" maxlength="4" style="width: 60px;">
+                                &nbsp;<input class="textbox" type="text" id="fhour" value="00" onmouseup="$('date_').checked = true" maxlength="2" style="width: 44px;"> :
+                                <input class="textbox" type="text" id="fminute" value="00" onmouseup="$('date_').checked = true" maxlength="2" style="width: 44px;">
+                                -&nbsp;<input class="textbox" type="text" id="thour" value="23" onmouseup="$('date_').checked = true" maxlength="2" style="width: 44px;"> :
+                                <input class="textbox" type="text" id="tminute" value="59" onmouseup="$('date_').checked = true" maxlength="2" style="width: 44px;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="listtable_1" ><input id="type_" type="radio" name="search_type" value="radiobutton"></td>
+                            <td class="listtable_1" >类型</td>
+                            <td class="listtable_1" >
+                                <select class="select" id="type" onmouseup="$('type_').checked = true" style="width: 100%;">
+                                    <option label="消息" value="m">消息</option>
+                                    <option label="警告" value="w">警告</option>
+                                    <option label="错误" value="e">错误</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" align="center">{sb_button text="搜索" onclick="search_log();" class="ok" id="searchbtn" submit=false}</td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+</div>
+</div>
+</div>
+<script>InitAccordion('tr.sea_open', 'div.panel', 'mainwrapper');</script>
