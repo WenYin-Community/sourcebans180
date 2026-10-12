@@ -294,4 +294,12 @@ return [
     'home.blocked_body'       => '{name} tried to enter<br />',
     'home.blocked_at'         => '<br />at {date}',
     'home.blocked_details'    => '<br /><div align=middle><a href="{url}">Click here for ban details.</a></div>',
+
+    // ---------------- Servers page · player context menu ----------------
+    'srv.menu.title'       => 'Player Commands',
+    'srv.menu.kick'        => 'Kick',
+    'srv.menu.block_comms' => 'Block Comms',
+    'srv.menu.ban'         => 'Ban',
+    'srv.menu.view_profile' => 'View Profile',
+    'srv.menu.send_message' => 'Send Message',
 ];

@@ -297,4 +297,12 @@ return [
     'home.blocked_body'       => '{name} 试图进入<br />',
     'home.blocked_at'         => '<br />时间：{date}',
     'home.blocked_details'    => '<br /><div align=middle><a href="{url}">点击此处查看封禁详情。</a></div>',
+
+    // ---------------- 服务器页 · 玩家右键菜单 ----------------
+    'srv.menu.title'       => '玩家操作',
+    'srv.menu.kick'        => '踢出玩家',
+    'srv.menu.block_comms' => '禁言/禁麦',
+    'srv.menu.ban'         => '封禁玩家',
+    'srv.menu.view_profile' => '查看资料',
+    'srv.menu.send_message' => '发送消息',
 ];
