@@ -2601,34 +2601,42 @@ function SendMail($subject, $message, $type, $id)
 function CheckVersion()
 {
     $objResponse = new xajaxResponse();
-    $version = json_decode(file_get_contents("https://sbpp.github.io/version.json"), true);
+    $version = json_decode(@file_get_contents("https://sbpp.github.io/version.json"), true);
 
-    if(version_compare($version['version'], SB_VERSION) > 0) {
+    if (!is_array($version) || !isset($version['version']) || $version['version'] === '') {
+        $objResponse->addAssign("relver", "innerHTML", "<span style='color:#aa0000;'>Error</span>");
+        $objResponse->addAssign("versionmsg", "innerHTML", "<span style='color:#aa0000;'><strong>Error Retrieving Latest Release.</strong></span>");
+        return $objResponse;
+    }
+
+    if (version_compare($version['version'], SB_VERSION) > 0) {
         $msg = "<span style='color:#aa0000;'><strong>A New Release is Available.</strong></span>";
     } else {
         $msg = "<span style='color:#00aa00;'><strong>You have the Latest Release.</strong></span>";
     }
 
-    if(strlen($version['version']) > 8 || $version['version'] == "") {
+    if (strlen($version['version']) > 8) {
         $version['version'] = "<span style='color:#aa0000;'>Error</span>";
         $msg = "<span style='color:#aa0000;'><strong>Error Retrieving Latest Release.</strong></span>";
     }
 
-    $objResponse->addAssign("relver", "innerHTML",  $version['version']);
+    $objResponse->addAssign("relver", "innerHTML", $version['version']);
 
     if (SB_DEV) {
-        if (intval($version['git']) > SB_GITREV) {
+        $gitrev = $version['git'] ?? '';
+
+        if (intval($gitrev) > SB_GITREV) {
             $svnmsg = "<span style='color:#aa0000;'><strong>A New Dev Version is Available.</strong></span>";
         } else {
             $svnmsg = "<span style='color:#00aa00;'><strong>You have the Latest Dev Version.</strong></span>";
         }
 
-        if (strlen($version['git']) > 8 || $version['git'] == "") {
-            $version['git'] = "<span style='color:#aa0000;'>Error</span>";
+        if (strlen($gitrev) > 8 || $gitrev === "") {
+            $gitrev = "<span style='color:#aa0000;'>Error</span>";
             $svnmsg = "<span style='color:#aa0000;'><strong>Error retrieving latest Dev Version.</strong></span>";
         }
-        $msg .= "<br>".$svnmsg;
-        $objResponse->addAssign("svnrev", "innerHTML",  $version['git']);
+        $msg .= "<br>" . $svnmsg;
+        $objResponse->addAssign("svnrev", "innerHTML", $gitrev);
     }
 
     $objResponse->addAssign("versionmsg", "innerHTML", $msg);
@@ -3134,7 +3142,7 @@ function GetGroups($friendid)
     preg_match("/<privacyState>([^\]]*)<\/privacyState>/", $raw, $status);
     if(($status && $status[1] != "public") || strstr($raw, "<groups>")) {
         $raw = str_replace("&", "", $raw);
-        $raw = utf8_encode($raw);
+        $raw = mb_convert_encoding($raw, 'UTF-8', 'ISO-8859-1');
         $xml = simplexml_load_string($raw); // parse xml
         $result = $xml->xpath('/profile/groups/group'); // go to the group nodes
         $i = 0;
@@ -3146,7 +3154,7 @@ function GetGroups($friendid)
                     "http://steamcommunity.com/gid/" . $node->groupID64 . "/memberslistxml/?xml=1"
                 );
                 $memberlistxml = str_replace("&", "", $memberlistxml);
-                $memberlistxml = utf8_encode($memberlistxml);
+                $memberlistxml = mb_convert_encoding($memberlistxml, 'UTF-8', 'ISO-8859-1');
                 $groupxml = simplexml_load_string($memberlistxml); // parse xml
                 $node = $groupxml->xpath('/memberList/groupDetails');
                 $node = $node[0];
@@ -3170,7 +3178,7 @@ function GetGroups($friendid)
                 var a = document.createElement("a");
                 a.href = "http://steamcommunity.com/groups/'.$node->groupURL.'";
                 a.setAttribute("target","_blank");
-                var txt = document.createTextNode("'.utf8_decode($node->groupName).'");
+                var txt = document.createTextNode("'.mb_convert_encoding($node->groupName, 'ISO-8859-1', 'UTF-8').'");
                 a.appendChild(txt);
                 td.appendChild(a);
                 var txt = document.createTextNode(" (");

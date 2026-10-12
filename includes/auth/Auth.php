@@ -1,5 +1,6 @@
 <?php
 
+use Lcobucci\JWT\Exception as JWTException;
 use Lcobucci\JWT\Token;
 
 /**
@@ -68,15 +69,20 @@ class Auth
     public static function verify(): ?Token
     {
         $cookie = self::getJWTFromCookie();
-        if (empty($cookie) || preg_match('/.*\..*\..*\./', $cookie)) {
+        if (empty($cookie)) {
             return null;
         }
 
-        $token = JWT::parse($cookie);
+        try {
+            $token = JWT::parse($cookie);
 
-        if (JWT::validate($token)) {
-            self::updateLastAccessed($token->claims()->get('jti'));
-            return $token;
+            if (JWT::validate($token)) {
+                self::updateLastAccessed($token->claims()->get('jti'));
+                return $token;
+            }
+        } catch (JWTException $e) {
+            // Cookie 格式非法、签名不匹配或已过期 —— 视为未登录
+            return null;
         }
 
         return null;
