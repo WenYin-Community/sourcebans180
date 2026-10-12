@@ -69,6 +69,24 @@ HTML;
     }
 }
 
+// 统一认证模式：纯 SSO 页（本地登录表单仅开关关闭时可见）
+if (defined('WYAUTH_ENABLED') && WYAUTH_ENABLED) {
+    if (Auth::verify() !== null) {
+        header('Location: index.php?p=home');
+        exit();
+    }
+    $theme->assign('sso_mode', true);
+    $theme->assign('sso_reason', WyAuthHandler::pageState());
+    $theme->assign('sso_login_url', WYAUTH_LOGIN);
+    $theme->assign('sso_texts', [
+        'title' => Lang::get('login.sso.title'),
+        'desc' => Lang::get('login.sso.desc'),
+        'button' => Lang::get('login.sso.button'),
+        'not_open' => Lang::get('login.sso.not_open'),
+        'unavailable' => Lang::get('login.sso.unavailable'),
+    ]);
+}
+
 $theme->assign('redir', "DoLogin('');");
 $theme->setLeftDelimiter("-{");
 $theme->setRightDelimiter("}-");

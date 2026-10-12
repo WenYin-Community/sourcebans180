@@ -1,3 +1,21 @@
+{if $sso_mode}
+<table style="margin: 30px auto;">
+    <tr>
+        <td class="listtable_top"><b>{$sso_texts.pw_title}</b></td>
+    </tr>
+    <tr>
+        <td class="listtable_1" style="padding: 15px;">
+            <div id="login-content">
+                <div>{$sso_texts.pw_hint}</div>
+
+                <div id="loginSubmit" style="margin-top: 12px;">
+                    {sb_button text=$sso_texts.button onclick="location.href='`$sso_login_url`'" class="ok login" id="ssologin" style="width: 100%; text-transform: uppercase;" submit=false}
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+{else}
 <div id="lostpassword">
     <div id="login-content">
 
@@ -29,3 +47,4 @@
 
     </div>
 </div>
+{/if}

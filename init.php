@@ -81,6 +81,7 @@ require_once(INCLUDES_PATH.'/security/Crypto.php');
 require_once(INCLUDES_PATH.'/auth/JWT.php');
 
 require_once(INCLUDES_PATH.'/auth/handler/NormalAuthHandler.php');
+require_once(INCLUDES_PATH.'/auth/handler/WyAuthHandler.php');
 
 require_once(INCLUDES_PATH.'/auth/Auth.php');
 require_once(INCLUDES_PATH.'/auth/Host.php');
@@ -130,6 +131,9 @@ if (DEBUG_MODE) {
 }
 
 Auth::init($GLOBALS['PDO']);
+
+// 统一认证：本地未登录且持有中心票据时静默兑换并建会话（内部自检 WYAUTH_ENABLED）
+WyAuthHandler::bootstrap();
 
 // ---------------------------------------------------
 // Setup our user manager

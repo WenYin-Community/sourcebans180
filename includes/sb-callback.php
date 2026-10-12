@@ -106,6 +106,12 @@ function Plogin(string $username, string $password, string $remember = '', strin
     global $userbank;
     $objResponse = new xajaxResponse();
 
+    // 统一认证模式：本地密码登录入口关闭（登录仅经认证中心）
+    if (defined('WYAUTH_ENABLED') && WYAUTH_ENABLED) {
+        $objResponse->addRedirect('?p=login', 0);
+        return $objResponse;
+    }
+
     if (empty($password)) {
         $objResponse->addRedirect('?p=login&m=empty_pwd', 0);
         return $objResponse;
@@ -131,6 +137,13 @@ function Plogin(string $username, string $password, string $remember = '', strin
 function LostPassword(string $email)
 {
     $objResponse = new xajaxResponse();
+
+    // 统一认证模式：密码由中心管理，本地找回入口关闭
+    if (defined('WYAUTH_ENABLED') && WYAUTH_ENABLED) {
+        $objResponse->addRedirect('?p=lostpassword', 0);
+        return $objResponse;
+    }
+
     $GLOBALS['PDO']->query('SELECT aid, user FROM `:prefix_admins` WHERE `email` = :email');
     $GLOBALS['PDO']->bind(':email', $email);
     $result = $GLOBALS['PDO']->single();

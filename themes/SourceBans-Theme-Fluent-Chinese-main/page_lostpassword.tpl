@@ -1,3 +1,21 @@
+{if $sso_mode}
+<div class="flex flex-jc:center flex-ai:center">
+    <div class="layout_box_small layout_box">
+        <div class="layout_box_title">
+            <h2><i class="fas fa-key"></i> {$sso_texts.pw_title}</h2>
+        </div>
+        <div class="padding">
+            <div class="margin-bottom:half">
+                {$sso_texts.pw_hint}
+            </div>
+
+            <div class="flex margin-top">
+                {sb_button text=$sso_texts.button onclick="location.href='`$sso_login_url`'" class="button button-success flex:11" id="ssologin" submit=false}
+            </div>
+        </div>
+    </div>
+</div>
+{else}
 <div class="flex flex-jc:center flex-ai:center">
     <div class="layout_box_small layout_box">
         <div class="layout_box_title">
@@ -29,3 +47,4 @@
         </div>
     </div>
 </div>
+{/if}

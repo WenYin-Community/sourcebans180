@@ -169,6 +169,16 @@ UPDATE `sb_admins` SET `gid` = 0, `extraflags` = 256, `srv_group` = '服务器�
 - 登录 `includes/auth/handler/NormalAuthHandler.php` **只校验用户名 + 密码**，不要求网页权限，
   因此"无网页权限"的服务器管理组照样能登录。
 
+## 统一认证（SSO，可选）
+
+由 `config.php` 的 `WYAUTH_*` 常量控制（**未定义或 `WYAUTH_ENABLED=false` = 纯本地认证**，原代码路径完整保留）：
+
+- **登录流程**：`init.php` 在 `Auth::init()` 后调用 `WyAuthHandler::bootstrap()` —— 本地未登录且持有认证中心 `wy_auth` 票据时静默兑换（HMAC-SHA256 签名调中心 `api.php action=ticket`），成功即 `Auth::login()` 建本地 JWT 会话，并 302 重载一次使其生效（GET；POST 不重载防丢数据）。兑换失败按票据值负缓存 5 分钟（`sbpp_wyauth_neg` Cookie，含 `not_open`/`api_down` 原因），登录页据此显示提示。
+- **账号绑定**：按 `sb_admins.user` 唯一匹配（排除 `aid=0`/CONSOLE）；未命中**自动建号** —— `gid=0`、`extraflags=-33522432`（0xFE007D00）、`srv_group='服务器管理'`、写 `sb_admins_servers_groups` 关联全部服务器、随机本地密码（不可本地登录）。该配置与存量服务器管理账号逐字段一致，**调整前先读「权限模型」**。
+- **入口收敛**（开关开启时）：本地登录表单、找回密码页及其 xajax 端点（`Plogin`/`LostPassword`）一并关闭；登出清本地会话后 302 中心 `logout.php`（全域登出）。
+- **运维**：`WYAUTH_*` 仅存 `config.php`（不入库），模板见 `config.php.template`；改模板后清 `templates_c/`；应急回退 = 开关置 `false`。
+- ⚠️ 新增任何绕过 SSO 的本地登录入口前必须与主人确认。
+
 ## 测试与验证
 
 - 仓库**没有**单元测试、CI、linter 配置。改动后的最低验证见上文「本地验证清单」（容器语法检查 + 全路由冒烟 + `podman logs` 查诊断）。
@@ -213,5 +223,5 @@ podman run --rm --network host -v "$PWD":/src -w /src docker.io/library/node:24-
   git diff origin/main..HEAD --name-only | grep -E 'config\.php$|\.env|local-test|\.workbuddy|db/|\.mmdb'
   git diff origin/main..HEAD --unified=0 | grep '^+' | grep -iE 'password\s*=|secret\s*=|api[_-]?key\s*='
   ```
-- 改动历史：i18n 汉化、Steam OpenID 移除、PHP 8.4+ 完整移植、**权限模型重构（管理面板入口与权限位解耦，见「权限模型」章节）**（详见 `.workbuddy/memory/` 日志）。
+- 改动历史：i18n 汉化、Steam OpenID 移除、PHP 8.4+ 完整移植、**权限模型重构（管理面板入口与权限位解耦，见「权限模型」章节）**、**统一认证（SSO）接入（见「统一认证」章节）**（详见 `.workbuddy/memory/` 日志）。
 - ⚠️ `.gitignore` 曾漏掉 `.local-test/`（内含本地 MySQL 口令与生产库名），已补至第 8 行；**新增任何本地脚手架前先确认忽略规则**。

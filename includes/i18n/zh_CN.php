@@ -305,4 +305,13 @@ return [
     'srv.menu.ban'         => '封禁玩家',
     'srv.menu.view_profile' => '查看资料',
     'srv.menu.send_message' => '发送消息',
+
+    // ---------------- 统一认证（SSO） ----------------
+    'login.sso.title'       => '统一认证登录',
+    'login.sso.desc'        => '本站已接入玟茵开源社区统一认证。请使用社区账号登录；如提示未开通访问权限，请联系管理员开通。',
+    'login.sso.button'      => '前往统一认证登录',
+    'login.sso.not_open'    => '当前账号未开通本站访问权限，请联系管理员开通后再试。',
+    'login.sso.unavailable' => '统一认证服务暂时不可用，请稍后重试。',
+    'login.sso.pw_title'    => '忘记密码',
+    'login.sso.pw_hint'     => '本站密码由统一认证中心统一管理，请前往认证中心，在登录页使用「忘记密码」重置。',
 ];

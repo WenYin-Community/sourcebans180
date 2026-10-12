@@ -302,4 +302,13 @@ return [
     'srv.menu.ban'         => 'Ban',
     'srv.menu.view_profile' => 'View Profile',
     'srv.menu.send_message' => 'Send Message',
+
+    // ---------------- Unified sign-in (SSO) ----------------
+    'login.sso.title'       => 'Unified Sign-in',
+    'login.sso.desc'        => 'This site uses the WenYin Community unified authentication. Please sign in with your community account; if access is not enabled, contact an administrator.',
+    'login.sso.button'      => 'Go to unified sign-in',
+    'login.sso.not_open'    => 'This account has not been granted access to this site. Please contact an administrator.',
+    'login.sso.unavailable' => 'The unified authentication service is temporarily unavailable. Please try again later.',
+    'login.sso.pw_title'    => 'Forgot Password',
+    'login.sso.pw_hint'     => 'Passwords are managed by the unified authentication center. Please reset it via the "Forgot password" link on the sign-in page there.',
 ];

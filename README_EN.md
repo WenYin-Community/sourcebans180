@@ -25,13 +25,14 @@ An **admin, ban, and communications-block management system** for Source engine 
 | Communications blocks | Mute / gag management sharing the same permission model as bans |
 | Server management | Server CRUD, live status and player queries, **RCON remote console** |
 | Permissions | Two-layer model: web group permissions + SourceMod flags, granular down to individual admin actions |
+| Unified sign-in (optional) | Optional community SSO center integration: silent cross-subdomain ticket sign-in, per-site admission control, auto-provisioning of newly approved accounts; switch off to fall back to local credentials entirely |
 | Admin backend | Admin, admin-group, server-access, and mod management |
 | Public frontend | Multi-criteria ban-list search, player profiles, account and password recovery |
 | Notifications | Email delivery (ban notices, protest replies) with SMTP support |
 | Internationalization | Built-in lightweight i18n subsystem; UI strings switchable between Chinese and English |
 | Misc | Demo upload/download, map thumbnails, game icons, GeoIP country lookup, audit logging |
 
-> 🔐 **Security note**: This fork has **completely removed Steam OpenID login** (it relied on an external redirect and represented a potential attack surface). Administrators sign in exclusively with local credentials; sessions use JWT tokens. The Steam Web API is used only to **read** player profiles and Steam group info — it plays no part in authentication.
+> 🔐 **Security note**: This fork has **completely removed Steam OpenID login** (it relied on an external redirect and represented a potential attack surface). Administrators sign in with local credentials by default, and sessions use JWT tokens; an optional **community unified sign-in (SSO)** integration is also supported (see "Unified Sign-in Center" below). The Steam Web API is used only to **read** player profiles and Steam group info — it plays no part in authentication.
 
 ## Requirements
 
@@ -136,6 +137,29 @@ chmod -R a+w cache templates_c demos images/maps images/games
 ### 5. Finish the installation
 
 Open the site root in a browser and complete the setup wizard. **After installation, delete the `install/` and `updater/` directories** — the application refuses to start while they exist.
+
+### 6. (Optional) Unified sign-in center
+
+This branch ships an **optional SSO integration**: once the application is registered at the authentication center, add the following constants to `config.php` to enable it — sign-in then goes through the center's cross-subdomain ticket (`wy_auth` cookie) which is silently exchanged for a local JWT session. With `WYAUTH_ENABLED=false` (or the block omitted), the panel uses local credentials exclusively.
+
+```php
+define('WYAUTH_ENABLED', true);                                    // SSO switch
+define('WYAUTH_API', 'https://auth.example.com/auth/api.php');     // auth-center API endpoint
+define('WYAUTH_LOGIN', 'https://auth.example.com/auth/login.php'); // auth-center login page
+define('WYAUTH_APP_ID', 'ban');                                    // application id (registered in the center's apps table)
+define('WYAUTH_SECRET', '');                                       // application secret (must match apps.secret; never expose)
+define('WYAUTH_COOKIE_NAME', 'wy_auth');                           // ticket cookie name
+```
+
+Behavior notes:
+
+- **Admission control**: the center grants site access per group; accounts without access are not silently signed in, and the login page shows a "not enabled" notice.
+- **Auto-provisioning**: an account approved at the center is **auto-provisioned on first sign-in** into the "server admin" group (kick/ban rights, no admin-panel access); its local password is random and unusable.
+- **Account binding**: matched by username against existing admins; existing permission groups are **never overwritten**.
+- **Entry consolidation**: once enabled, the local login form and password-recovery flow are closed; logout is global (also signs out of the center).
+- **Degradation**: when the center is unreachable the login page shows a notice — there is no local-password bypass; set `WYAUTH_ENABLED` back to `false` for an emergency fallback.
+
+> Deployment of the authentication center and the site-integration protocol are documented in its own project (register the application in `apps` + HMAC-signed API).
 
 ## Installing the Game-Server Plugin (SourceMod)
 
@@ -260,7 +284,7 @@ sourcebans180/
 ├── getdemo.php             # Demo download endpoint
 ├── config.php.template     # Database configuration template
 ├── includes/               # Core libraries
-│   ├── auth/               #   JWT session authentication (lcobucci/jwt 5.x)
+│   ├── auth/               #   Session auth: JWT (lcobucci/jwt 5.x) + SSO handler (handler/)
 │   ├── i18n/               #   Internationalization: Lang.php + zh_CN / en_US packs
 │   ├── security/           #   Crypto utilities
 │   ├── SteamID/            #   SteamID conversion and parsing

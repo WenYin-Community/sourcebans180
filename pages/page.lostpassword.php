@@ -6,6 +6,19 @@ use Sbpp\Mail\EmailType;
 use Sbpp\Mail\Mail;
 use Sbpp\Mail\Mailer;
 
+// 统一认证模式：密码由认证中心统一管理，本地找回流程关闭
+if (defined('WYAUTH_ENABLED') && WYAUTH_ENABLED) {
+    $theme->assign('sso_mode', true);
+    $theme->assign('sso_login_url', WYAUTH_LOGIN);
+    $theme->assign('sso_texts', [
+        'pw_title' => Lang::get('login.sso.pw_title'),
+        'pw_hint' => Lang::get('login.sso.pw_hint'),
+        'button' => Lang::get('login.sso.button'),
+    ]);
+    $theme->display('page_lostpassword.tpl');
+    return;
+}
+
 if (isset($_GET['email'], $_GET['validation']) && (!empty($_GET['email']) || !empty($_GET['validation']))) {
     $email = $_GET['email'];
     $validation = $_GET['validation'];

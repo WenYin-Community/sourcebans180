@@ -41,3 +41,12 @@ define('STEAMAPIKEY', ''); // Steam API Key for Shizz
 define('SB_EMAIL', '');
 define('SB_NEW_SALT', '$5$'); //Salt for passwords
 define('SB_SECRET_KEY', ''); //Secret for JWT
+
+// ---- 统一认证（社区认证中心，可选）----
+// 启用后登录/登出走认证中心 SSO；WYAUTH_ENABLED=false 或整段留空时使用本地账号密码登录。
+// define('WYAUTH_ENABLED', true);
+// define('WYAUTH_API', 'https://auth.example.com/auth/api.php');   // 认证中心 API
+// define('WYAUTH_LOGIN', 'https://auth.example.com/auth/login.php'); // 认证中心登录页
+// define('WYAUTH_APP_ID', 'ban');                              // 应用 ID（认证中心 apps 表）
+// define('WYAUTH_SECRET', '');                                 // 应用密钥（与 apps.secret 一致）
+// define('WYAUTH_COOKIE_NAME', 'wy_auth');                     // 票据 Cookie 名

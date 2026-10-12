@@ -1,3 +1,30 @@
+-{if $sso_mode}-
+<div class="flex flex-jc:center flex-ai:center">
+    <div class="layout_box_small layout_box">
+        <div class="layout_box_title">
+            <h2><i class="fas fa-shield-halved"></i> -{$sso_texts.title}-</h2>
+        </div>
+
+        <div class="padding">
+            -{if $sso_reason == 'not_open'}-
+            <div class="message message:error margin-bottom:half">-{$sso_texts.not_open}-</div>
+            -{elseif $sso_reason == 'api_down'}-
+            <div class="message message:error margin-bottom:half">-{$sso_texts.unavailable}-</div>
+            -{/if}-
+
+            <div class="margin-bottom:half">
+                -{$sso_texts.desc}-
+            </div>
+
+            -{if $sso_reason != 'not_open'}-
+            <div class="flex margin-top">
+                -{sb_button text=$sso_texts.button onclick="location.href='`$sso_login_url`'" class="button button-success flex:11" id="ssologin" submit=false}-
+            </div>
+            -{/if}-
+        </div>
+    </div>
+</div>
+-{else}-
 <div class="flex flex-jc:center flex-ai:center">
     <div class="layout_box_small layout_box">
         <div class="layout_box_title">
@@ -58,3 +85,4 @@
         if (event.key == 'space' ) -{$redir}-
     };
 </script>
+-{/if}-

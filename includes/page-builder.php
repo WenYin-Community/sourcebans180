@@ -16,6 +16,10 @@ function route($fallback)
             return [Lang::get('page.login'), '/page.login.php'];
         case 'logout':
             Auth::logout();
+            if (defined('WYAUTH_ENABLED') && WYAUTH_ENABLED) {
+                // 统一认证模式：跳中心 logout（撤销票据 + 清 wy_auth Cookie）
+                WyAuthHandler::logoutRedirect();
+            }
             header('Location: index.php?p=home');
             exit();
         case 'submit':

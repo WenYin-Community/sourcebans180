@@ -1,3 +1,29 @@
+-{if $sso_mode}-
+<table style="margin: 30px auto;">
+    <tr>
+        <td class="listtable_top"><b>-{$sso_texts.title}-</b></td>
+    </tr>
+    <tr>
+        <td class="listtable_1" style="padding: 15px;">
+            <div id="login-content">
+                -{if $sso_reason == 'not_open'}-
+                <div id="loginUsername.msg" class="badentry" style="display: block; width: auto;">-{$sso_texts.not_open}-</div>
+                -{elseif $sso_reason == 'api_down'}-
+                <div id="loginUsername.msg" class="badentry" style="display: block; width: auto;">-{$sso_texts.unavailable}-</div>
+                -{/if}-
+
+                <div>-{$sso_texts.desc}-</div>
+
+                -{if $sso_reason != 'not_open'}-
+                <div id="loginSubmit" style="margin-top: 12px;">
+                    -{sb_button text=$sso_texts.button onclick="location.href='`$sso_login_url`'" class="ok login" id="ssologin" style="width: 100%; text-transform: uppercase;" submit=false}-
+                </div>
+                -{/if}-
+            </div>
+        </td>
+    </tr>
+</table>
+-{else}-
 <table style="margin: 30px auto;">
     <tr>
         <td class="listtable_top"><b>Admin Login</b></td>
@@ -43,3 +69,4 @@
         if (event.key == 'space' ) -{$redir}-
     };
 </script>
+-{/if}-
