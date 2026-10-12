@@ -130,6 +130,21 @@ function CheckAdminAccess($mask)
 }
 
 /**
+ * 网页管理后台（管理面板）访问守卫。
+ *
+ * 只放行"网页管理组"成员（见 CUserManager::is_web_admin()），
+ * 服务器管理组即使持有网页权限位（如 ADMIN_ADD_BAN）也无法进入后台。
+ */
+function CheckWebAdminAccess()
+{
+    global $userbank;
+    if (!$userbank->is_web_admin()) {
+        header("Location: index.php?p=login&m=no_access");
+        die();
+    }
+}
+
+/**
  * @param  int  $sec
  * @param  bool $textual
  * @return false|string

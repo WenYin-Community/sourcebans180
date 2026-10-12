@@ -42,7 +42,7 @@ $navbar = [
         'title' => Lang::get('nav.admin'),
         'endpoint' => 'admin',
         'description' => Lang::get('nav.admin.desc'),
-        'permission' => $userbank->is_admin()
+        'permission' => $userbank->is_web_admin()
     ]
 ];
 
@@ -93,7 +93,7 @@ foreach ($navbar as $key => $tab) {
     }
 }
 
-if ($userbank->is_admin()) {
+if ($userbank->is_web_admin()) {
     $cat = filter_input(INPUT_GET, 'c', FILTER_SANITIZE_SPECIAL_CHARS);
     foreach ($admin as $key => $tab) {
         $admin[$key]['state'] = ($cat === $tab['endpoint']) ? 'active' : '';
@@ -106,7 +106,7 @@ if ($userbank->is_admin()) {
 
 $theme->assign('navbar', array_values($navbar));
 $theme->assign('adminbar', array_values($admin));
-$theme->assign('isAdmin', $userbank->is_admin());
+$theme->assign('isAdmin', $userbank->is_web_admin());
 $theme->assign('login', $userbank->is_logged_in());
 $theme->assign('username', $userbank->GetProperty("user"));
 $theme->display('core/navbar.tpl');

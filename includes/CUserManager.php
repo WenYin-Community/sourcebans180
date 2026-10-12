@@ -73,7 +73,7 @@ class CUserManager
         // Not in the manager, so we need to get them from DB
         $this->dbh->query("SELECT adm.user user, adm.authid authid, adm.password password, adm.gid gid, adm.email email, adm.validate validate, adm.extraflags extraflags,
 							adm.immunity admimmunity,sg.immunity sgimmunity, adm.srv_password srv_password, adm.srv_group srv_group, adm.srv_flags srv_flags,sg.flags sgflags,
-							wg.flags wgflags, wg.name wgname, adm.lastvisit lastvisit
+							wg.flags wgflags, wg.type wgtype, wg.name wgname, adm.lastvisit lastvisit
 							FROM `:prefix_admins` AS adm
 							LEFT JOIN `:prefix_groups` AS wg ON adm.gid = wg.gid
 							LEFT JOIN `:prefix_srvgroups` AS sg ON adm.srv_group = sg.name
@@ -92,6 +92,7 @@ class CUserManager
         $user['authid'] = $res['authid'];
         $user['password'] = $res['password'];
         $user['gid'] = $res['gid'];
+        $user['wgtype'] = ($res['wgtype'] === null) ? null : (int)$res['wgtype'];
         $user['email'] = $res['email'];
         $user['validate'] = $res['validate'];
         $user['extraflags'] = (intval($res['extraflags']) | intval($res['wgflags']));
@@ -196,6 +197,38 @@ class CUserManager
             return true;
         }
         return false;
+    }
+
+    /**
+     * 是否可进入网页管理后台（"管理面板"）。
+     *
+     * 判据：账号被分配到一个"网页管理组"（sb_groups.type != 3）。
+     * type=3 是"服务器组"（纯服务器打包），type 0/1 才是网页管理组。
+     *
+     * 与 is_admin() 的区别：is_admin() 是"是否持有任意网页权限位"，
+     * 服务器管理组为了在网页上踢人/封禁会持有 ADMIN_ADD_BAN，因而 is_admin()
+     * 为 true，但它不属于网页管理组，所以不会获得管理面板入口。
+     *
+     * @param int|null $aid
+     * @return bool
+     */
+    public function is_web_admin($aid = null)
+    {
+        if (is_null($aid)) {
+            $aid = $this->aid;
+        }
+
+        if ($aid <= 0) {
+            return false;
+        }
+
+        if (!isset($this->admins[$aid])) {
+            $this->GetUserArray($aid);
+        }
+
+        $wgType = $this->admins[$aid]['wgtype'] ?? null;
+
+        return $wgType !== null && (int)$wgType !== 3;
     }
 
 

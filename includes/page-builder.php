@@ -35,6 +35,8 @@ function route($fallback)
         case 'home':
             return [Lang::get('page.dashboard'), '/page.home.php'];
         case 'admin':
+            // 管理面板只对"网页管理组"开放；服务器管理组不得进入
+            CheckWebAdminAccess();
             switch ($categorie) {
                 case 'groups':
                     CheckAdminAccess(ADMIN_OWNER|ADMIN_LIST_GROUPS|ADMIN_ADD_GROUP|ADMIN_EDIT_GROUPS|ADMIN_DELETE_GROUPS);
