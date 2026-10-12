@@ -30,8 +30,8 @@
                             <!-- <td id="vac_{$server.sid}" class="text:center"></td> -->   <!-- ! Customized information -->
                             <td id="host_{$server.sid}"><i>查询服务器数据中...</i></td>
                             <td>{$server.ip}:{$server.port}</td>
-                            <td id="players_{$server.sid}" class="text:center">N/A</td>
-                            <td id="map_{$server.sid}" class="text:center">N/A</td>
+                            <td id="players_{$server.sid}" class="text:center">{$lang["common.na"]}</td>
+                            <td id="map_{$server.sid}" class="text:center">{$lang["common.na"]}</td>
                             <td class="text:center responsive_show:desktop">
                                 <a class="button button-success" href="steam://connect/{$server.ip}:{$server.port}"><i
                                         class="fa fa-sign-in"></i> 加入游戏</a>

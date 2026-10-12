@@ -1,4 +1,4 @@
-<div class="layout_box flex:11 admin_tab_content tabcontent" id="List servers" style="display: block;">
+<div class="layout_box flex:11 admin_tab_content tabcontent" id="查看服务器" style="display: block;">
     {if NOT $permission_list}
         拒绝访问
     {else}

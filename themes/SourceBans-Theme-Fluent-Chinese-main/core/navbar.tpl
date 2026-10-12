@@ -98,7 +98,6 @@
           </li>
         {else}
           <li>
-            <!-- <a class="button button-success" href='index.php?p=login'>Existing user? Sign In</a> -->
             <a class="button button-success" href='index.php?p=login'>登录</a>
           </li>
         {/if}
@@ -121,7 +120,6 @@
           <a class="button button-important button:full" href='index.php?p=logout'><i class="fas fa-sign-out-alt"></i>
             退出登录</a>
         {else}
-          <!-- <a class="button button-success" href='index.php?p=login'>Existing user? Sign In</a> -->
           <a class="button button-success" href='index.php?p=login'>登录</a>
         {/if}
       </div>
@@ -155,7 +153,6 @@
             <ul>
                 {if $login}
                     <li class="margin-right">
-                        <!-- <a href='index.php?p=account'><i class="fa-solid fa-gear"></i> Account Settings</a> -->
                         <a href='index.php?p=account'><i class="fa-solid fa-gear"></i> 账号信息</a>
                     </li>
                 {/if}

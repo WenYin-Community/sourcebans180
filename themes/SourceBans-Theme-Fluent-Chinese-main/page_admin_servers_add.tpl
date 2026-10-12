@@ -1,4 +1,4 @@
-<div class="layout_box flex:11 admin_tab_content tabcontent" id="Add new server">
+<div class="layout_box flex:11 admin_tab_content tabcontent" id="添加服务器">
     {if not $permission_addserver}
         拒绝访问
     {else}

@@ -1,4 +1,4 @@
-<div class="layout_box flex:11 admin_tab_content tabcontent" id="List admins" style="display: block;">
+<div class="layout_box flex:11 admin_tab_content tabcontent" id="查看管理员" style="display: block;">
     {if not $permission_listadmin}
         拒绝访问
     {else}

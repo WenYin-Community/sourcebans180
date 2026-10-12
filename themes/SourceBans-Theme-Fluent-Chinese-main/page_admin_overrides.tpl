@@ -1,4 +1,4 @@
-<div class="layout_box flex:11 admin_tab_content tabcontent" id="Overrides">
+<div class="layout_box flex:11 admin_tab_content tabcontent" id="覆盖设置">
     {if NOT $permission_addadmin}
         <section class="error padding">
             <i class="fas fa-exclamation-circle"></i>

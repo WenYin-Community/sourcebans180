@@ -1,4 +1,4 @@
-<div class="layout_box flex:11 admin_tab_content tabcontent" id="View Permissions" style="display: block;">
+<div class="layout_box flex:11 admin_tab_content tabcontent" id="查看权限" style="display: block;">
     <div class="admin_tab_content_title">
         <!-- <h2><i class="fas fa-address-card"></i> Your Permissions</h2> -->
         <h2><i class="fas fa-address-card"></i> 账户权限</h2>
@@ -44,7 +44,7 @@
     </div>
 </div>
 
-<div class="layout_box flex:11 admin_tab_content tabcontent" id="Change Password">
+<div class="layout_box flex:11 admin_tab_content tabcontent" id="修改密码">
     <div class="admin_tab_content_title">
         <!-- <h2><i class="fas fa-key"></i> Change Password</h2> -->
         <h2><i class="fas fa-key"></i> 修改密码</h2>
@@ -112,7 +112,7 @@
 </div>
 
 
-<div class="layout_box flex:11 admin_tab_content tabcontent" id="Server Password">
+<div class="layout_box flex:11 admin_tab_content tabcontent" id="服务器密码">
     <div class="admin_tab_content_title">
         <!-- <h2><i class="fab fa-steam-symbol"></i> Change Server Password</h2> -->
         <h2><i class="fab fa-steam-symbol"></i> 修改服务器密码</h2>
@@ -213,7 +213,7 @@
 </div>
 
 
-<div class="layout_box flex:11 admin_tab_content tabcontent" id="Change Email">
+<div class="layout_box flex:11 admin_tab_content tabcontent" id="修改邮箱">
     <div class="admin_tab_content_title">
         <!-- <h2><i class="fas fa-envelope"></i> Change E-Mail</h2> -->
         <h2><i class="fas fa-envelope"></i> 修改邮箱</h2>
