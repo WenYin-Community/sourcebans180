@@ -137,7 +137,7 @@ function LostPassword(string $email)
 
     if (empty($result['aid'])) {
         $objResponse->addScript(
-            "ShowBox('Error', 'The email address you supplied is not registered on the system', 'red', '');"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('pw.email_not_registered') . "', 'red', '');"
         );
         return $objResponse;
     }
@@ -158,10 +158,10 @@ function LostPassword(string $email)
 
     if ($isEmailSent) {
         $objResponse->addScript(
-            "ShowBox('Check E-Mail', 'Please check your email inbox (and spam) for a link which will help you reset your password.', 'blue', '');"
+            "ShowBox('Check E-Mail', '" . Lang::js('pw.check_email') . "', 'blue', '');"
         );
     } else {
-      $objResponse->addScript("ShowBox('Error', 'Error sending email.', 'red', '')");
+      $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('pw.send_failed') . "', 'red', '')");
     }
 
     return $objResponse;
@@ -232,7 +232,7 @@ function ChangeSrvPassword($aid, $srv_pass)
         );
     }
     $objResponse->addScript(
-        "ShowBox('Server Password changed', 'Your server password has been changed successfully.', 'green', 'index.php?p=account', true);"
+        "ShowBox('Server Password changed', '" . Lang::js('acct.srv_pwd_changed') . "', 'green', 'index.php?p=account', true);"
     );
     Log::add("m", "Srv Password Changed", "Password changed for admin ($aid)");
     return $objResponse;
@@ -282,7 +282,7 @@ function ChangeEmail($aid, $email, $password)
 
     $GLOBALS['db']->Execute("UPDATE `".DB_PREFIX."_admins` SET `email` = ? WHERE `aid` = ?", array($email, $aid));
     $objResponse->addScript(
-        "ShowBox('E-mail address changed', 'Your E-mail address has been changed successfully.', 'green', 'index.php?p=account', true);"
+        "ShowBox('E-mail address changed', '" . Lang::js('acct.email_changed') . "', 'green', 'index.php?p=account', true);"
     );
     Log::add("m", "E-mail Changed", "E-mail changed for admin ($aid).");
     return $objResponse;
@@ -370,7 +370,7 @@ function AddGroup($name, $type, $bitmask, $srvflags)
 
     Log::add("m", "Group Created", "A new group was created ($name).");
     $objResponse->addScript(
-        "ShowBox('Group Created', 'Your group has been successfully created.', 'green', 'index.php?p=admin&c=groups', true);"
+        "ShowBox('Group Created', '" . Lang::js('adm.group_created') . "', 'green', 'index.php?p=admin&c=groups', true);"
     );
     $objResponse->addScript("TabToReload();");
     return $objResponse;
@@ -422,14 +422,14 @@ function RemoveGroup($gid, $type)
             );
         } else {
             $objResponse->addScript(
-                "ShowBox('Group Deleted', 'The selected group has been deleted from the database', 'green', 'index.php?p=admin&c=groups', true);"
+                "ShowBox('Group Deleted', '" . Lang::js('adm.group_deleted') . "', 'green', 'index.php?p=admin&c=groups', true);"
             );
         }
         Log::add("m", "Group Deleted", "Group ($gid) has been deleted.");
     }
     else {
         $objResponse->addScript(
-            "ShowBox('Error', 'There was a problem deleting the group from the database. Check the logs for more info', 'red', 'index.php?p=admin&c=groups', true);
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.group_delete_failed') . "', 'red', 'index.php?p=admin&c=groups', true);
             ");
     }
 
@@ -465,12 +465,12 @@ function RemoveSubmission($sid, $archiv)
 
         if ($query1) {
             $objResponse->addScript(
-                "ShowBox('Submission Archived', 'The selected submission has been moved to the archive!', 'green', 'index.php?p=admin&c=bans', true);"
+                "ShowBox('Submission Archived', '" . Lang::js('adm.sub_archived') . "', 'green', 'index.php?p=admin&c=bans', true);"
             );
             Log::add("m", "Submission Archived", "Submission ($sid) has been moved to the archive.");
         } else {
             $objResponse->addScript(
-                "ShowBox('Error', 'There was a problem moving the submission to the archive. Check the logs for more info', 'red', 'index.php?p=admin&c=bans', true);"
+                "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.sub_archive_failed') . "', 'red', 'index.php?p=admin&c=bans', true);"
             );
         }
     } else if($archiv == "0") { // delete submission
@@ -487,10 +487,10 @@ function RemoveSubmission($sid, $archiv)
         $objResponse->addScript("SlideUp('asid_" . $sid . "a');");
 
         if ($query1) {
-            $objResponse->addScript("ShowBox('Submission Deleted', 'The selected submission has been deleted from the database', 'green', 'index.php?p=admin&c=bans', true);");
+            $objResponse->addScript("ShowBox('Submission Deleted', '" . Lang::js('adm.sub_deleted') . "', 'green', 'index.php?p=admin&c=bans', true);");
             Log::add("m", "Submission Deleted", "Submission ($sid) has been deleted.");
         } else {
-            $objResponse->addScript("ShowBox('Error', 'There was a problem deleting the submission from the database. Check the logs for more info', 'red', 'index.php?p=admin&c=bans', true);");
+            $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.sub_delete_failed') . "', 'red', 'index.php?p=admin&c=bans', true);");
         }
     } else if($archiv == "2") { // restore the submission
         $query1 = $GLOBALS['db']->Execute("UPDATE `" . DB_PREFIX . "_submissions` SET archiv = '0', archivedby = NULL WHERE subid = $sid");
@@ -501,10 +501,10 @@ function RemoveSubmission($sid, $archiv)
         $objResponse->addScript("SlideUp('asid_" . $sid . "a');");
 
         if ($query1) {
-            $objResponse->addScript("ShowBox('Submission Restored', 'The selected submission has been restored from the archive!', 'green', 'index.php?p=admin&c=bans', true);");
+            $objResponse->addScript("ShowBox('Submission Restored', '" . Lang::js('adm.sub_restored') . "', 'green', 'index.php?p=admin&c=bans', true);");
             Log::add("m", "Submission Restored", "Submission ($sid) has been restored from the archive.");
         } else {
-            $objResponse->addScript("ShowBox('Error', 'There was a problem restoring the submission from the archive. Check the logs for more info', 'red', 'index.php?p=admin&c=bans', true);");
+            $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.sub_restore_failed') . "', 'red', 'index.php?p=admin&c=bans', true);");
         }
     }
     return $objResponse;
@@ -530,12 +530,12 @@ function RemoveProtest($pid, $archiv)
 
         if ($query1) {
             $objResponse->addScript(
-                "ShowBox('Protest Deleted', 'The selected protest has been deleted from the database', 'green', 'index.php?p=admin&c=bans', true);"
+                "ShowBox('Protest Deleted', '" . Lang::js('adm.protest_deleted') . "', 'green', 'index.php?p=admin&c=bans', true);"
             );
             Log::add("m", "Protest Deleted", "Protest ($pid) has been deleted.");
         } else {
             $objResponse->addScript(
-                "ShowBox('Error', 'There was a problem deleting the protest from the database. Check the logs for more info', 'red', 'index.php?p=admin&c=bans', true);"
+                "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.protest_delete_failed') . "', 'red', 'index.php?p=admin&c=bans', true);"
             );
         }
     } else if($archiv == '1') { // move protest to archiv
@@ -551,12 +551,12 @@ function RemoveProtest($pid, $archiv)
 
         if ($query1) {
             $objResponse->addScript(
-                "ShowBox('Protest Archived', 'The selected protest has been moved to the archive.', 'green', 'index.php?p=admin&c=bans', true);"
+                "ShowBox('Protest Archived', '" . Lang::js('adm.protest_archived') . "', 'green', 'index.php?p=admin&c=bans', true);"
             );
             Log::add("m", "Protest Archived", "Protest ($pid) has been moved to the archive.");
         } else {
             $objResponse->addScript(
-                "ShowBox('Error', 'There was a problem moving the protest to the archive. Check the logs for more info', 'red', 'index.php?p=admin&c=bans', true);"
+                "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.protest_archive_failed') . "', 'red', 'index.php?p=admin&c=bans', true);"
             );
         }
     } else if($archiv == '2') { // restore protest
@@ -572,12 +572,12 @@ function RemoveProtest($pid, $archiv)
 
         if ($query1) {
             $objResponse->addScript(
-                "ShowBox('Protest Restored', 'The selected protest has been restored from the archive.', 'green', 'index.php?p=admin&c=bans', true);
+                "ShowBox('Protest Restored', '" . Lang::js('adm.protest_restored') . "', 'green', 'index.php?p=admin&c=bans', true);
                 ");
             Log::add("m", "Protest Deleted", "Protest ($pid) has been restored from the archive.");
         } else {
             $objResponse->addScript(
-                "ShowBox('Error', 'There was a problem restoring the protest from the archive. Check the logs for more info', 'red', 'index.php?p=admin&c=bans', true);"
+                "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.protest_restore_failed') . "', 'red', 'index.php?p=admin&c=bans', true);"
             );
         }
     }
@@ -612,13 +612,13 @@ function RemoveServer($sid)
 
     if($query1) {
         $objResponse->addScript(
-            "ShowBox('Server Deleted', 'The selected server has been deleted from the database', 'green', 'index.php?p=admin&c=servers', true);"
+            "ShowBox('Server Deleted', '" . Lang::js('adm.server_deleted') . "', 'green', 'index.php?p=admin&c=servers', true);"
         );
         Log::add("m", "Server Deleted", "Server ($servinfo[ip]:$servinfo[port]) has been deleted.");
     }
     else {
         $objResponse->addScript(
-            "ShowBox('Error', 'There was a problem deleting the server from the database. Check the logs for more info', 'red', 'index.php?p=admin&c=servers', true);"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.server_delete_failed') . "', 'red', 'index.php?p=admin&c=servers', true);"
         );
     }
     return $objResponse;
@@ -643,13 +643,13 @@ function RemoveMod($mid)
 
     if($query1) {
         $objResponse->addScript(
-            "ShowBox('MOD Deleted', 'The selected MOD has been deleted from the database', 'green', 'index.php?p=admin&c=mods', true);"
+            "ShowBox('MOD Deleted', '" . Lang::js('adm.mod_deleted') . "', 'green', 'index.php?p=admin&c=mods', true);"
         );
         Log::add("m", "MOD Deleted", "MOD ($modicon[name]) has been deleted.");
     }
     else {
         $objResponse->addScript(
-            "ShowBox('Error', 'There was a problem deleting the MOD from the database. Check the logs for more info', 'red', 'index.php?p=admin&c=mods', true);"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.mod_delete_failed') . "', 'red', 'index.php?p=admin&c=mods', true);"
         );
     }
     return $objResponse;
@@ -711,14 +711,14 @@ function RemoveAdmin($aid)
             );
         } else {
             $objResponse->addScript(
-                "ShowBox('Admin Deleted', 'The selected admin has been deleted from the database', 'green', 'index.php?p=admin&c=admins', true);"
+                "ShowBox('Admin Deleted', '" . Lang::js('adm.admin_deleted') . "', 'green', 'index.php?p=admin&c=admins', true);"
             );
         }
         Log::add("m", "Admin Deleted", "Admin ($gid[user]) has been deleted.");
     }
     else {
         $objResponse->addScript(
-            "ShowBox('Error', 'There was an error removing the admin from the database, please check the logs', 'red', 'index.php?p=admin&c=admins', true);"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.admin_delete_failed') . "', 'red', 'index.php?p=admin&c=admins', true);"
         );
     }
     return $objResponse;
@@ -818,7 +818,7 @@ function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_nam
         array($ip, (int)$port)
     );
     if($chk) {
-        $objResponse->addScript("ShowBox('Error', 'There already is a server with that IP:Port combination.', 'red');");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.server_exists') . "', 'red');");
         return $objResponse;
     }
 
@@ -850,7 +850,7 @@ function AddServer($ip, $port, $rcon, $rcon2, $mod, $enabled, $group, $group_nam
     }
 
     $objResponse->addScript(
-        "ShowBox('Server Added', 'Your server has been successfully created.', 'green', 'index.php?p=admin&c=servers');"
+        "ShowBox('Server Added', '" . Lang::js('adm.server_added') . "', 'green', 'index.php?p=admin&c=servers');"
     );
     $objResponse->addScript("TabToReload();");
     Log::add("m", "Server Added", "Server ($ip:$port) has been added.");
@@ -1233,7 +1233,7 @@ function AddAdmin(
     // Ohnoes! something went wrong, stop and show errs
     if($error) {
         $objResponse->AddScript(
-            "ShowBox('Error', 'There are some errors in your input. Please correct them.', 'red', '', true);"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('adm.input_errors') . "', 'red', '', true);"
         );
         return $objResponse;
     }
@@ -1355,7 +1355,7 @@ function AddAdmin(
             );
         } else {
             $objResponse->addScript(
-                "ShowBox('Admin Added', 'The admin has been added successfully', 'green', 'index.php?p=admin&c=admins');TabToReload();"
+                "ShowBox('Admin Added', '" . Lang::js('adm.admin_added') . "', 'green', 'index.php?p=admin&c=admins');TabToReload();"
             );
         }
 
@@ -1365,7 +1365,7 @@ function AddAdmin(
     else
     {
         $objResponse->addScript(
-            "ShowBox('User NOT Added', 'The admin failed to be added to the database. Check the logs for any SQL errors.', 'red', 'index.php?p=admin&c=admins');"
+            "ShowBox('User NOT Added', '" . Lang::js('adm.admin_add_failed') . "', 'red', 'index.php?p=admin&c=admins');"
         );
     }
 }
@@ -1764,7 +1764,7 @@ function KickPlayer(int $sid, $name)
 
     if (!$ret) {
         $objResponse->addScript(
-            "ShowBox('Error', 'Can\'t kick ".addslashes(htmlspecialchars($name)).". Can\'t connect to server!', 'red', '', true);"
+            "ShowBox('" . Lang::js('box.error') . "', 'Can\'t kick ".addslashes(htmlspecialchars($name)).". Can\'t connect to server!', 'red', '', true);"
         );
         return $objResponse;
     }
@@ -1791,19 +1791,19 @@ function KickPlayer(int $sid, $name)
                 rcon("sm_kick #$player[id] You have been kicked from this server", $sid);
                 Log::add("m", "Player kicked", "$username kicked player $player[name] ($player[steamid])");
                 $objResponse->addScript(
-                    "ShowBox('Success', 'Player ".addslashes($name)." has been kicked from the server!', 'green', '', true);"
+                    "ShowBox('" . Lang::js('box.success') . "', 'Player ".addslashes($name)." has been kicked from the server!', 'green', '', true);"
                 );
                 return $objResponse;
             } else {
                 $objResponse->addScript(
-                    "ShowBox('Error', 'Can\'t kick ".addslashes($name).". Player is immune!', 'red', '', true);"
+                    "ShowBox('" . Lang::js('box.error') . "', 'Can\'t kick ".addslashes($name).". Player is immune!', 'red', '', true);"
                 );
             }
         }
     }
 
     $objResponse->addScript(
-        "ShowBox('Error', 'Can\'t kick ".addslashes($name).". Player not on the server anymore!', 'red', '', true);"
+        "ShowBox('" . Lang::js('box.error') . "', 'Can\'t kick ".addslashes($name).". Player not on the server anymore!', 'red', '', true);"
     );
     return $objResponse;
 }
@@ -1823,7 +1823,7 @@ function PasteBan(int $sid, $name, int $type = 0)
 
     if (!$ret) {
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-        $objResponse->addScript("ShowBox('Error', 'Can\'t connect to server!', 'red', '', true);");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('ply.connect_failed') . "', 'red', '', true);");
         return $objResponse;
     }
 
@@ -1846,7 +1846,7 @@ function PasteBan(int $sid, $name, int $type = 0)
     }
 
     $objResponse->addScript(
-        "ShowBox('Error', 'Can\'t get player info for ".addslashes(htmlspecialchars($name)).". Player is not on the server anymore!', 'red', '', true);"
+        "ShowBox('" . Lang::js('box.error') . "', 'Can\'t get player info for ".addslashes(htmlspecialchars($name)).". Player is not on the server anymore!', 'red', '', true);"
     );
     $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
     return $objResponse;
@@ -1934,7 +1934,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
         );
 
         if (intval($chk[0]) > 0) {
-            $objResponse->addScript("ShowBox('Error', 'SteamID: $steam is already banned.', 'red', '');");
+            $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', 'SteamID: $steam is already banned.', 'red', '');");
             return $objResponse;
         }
 
@@ -1943,7 +1943,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
         foreach ($admchk as $admin) {
             if ($admin['authid'] == $steam && $userbank->GetProperty('srv_immunity') < $admin['srv_immunity']) {
                 $objResponse->addScript(
-                    "ShowBox('Error', 'SteamID: Admin ".$admin['user']." ($steam) is immune.', 'red', '');"
+                    "ShowBox('" . Lang::js('box.error') . "', 'SteamID: Admin ".$admin['user']." ($steam) is immune.', 'red', '');"
                 );
                 return $objResponse;
             }
@@ -1956,7 +1956,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
         );
 
         if (intval($chk[0]) > 0) {
-            $objResponse->addScript("ShowBox('Error', 'IP: $ip is already banned.', 'red', '');");
+            $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', 'IP: $ip is already banned.', 'red', '');");
             return $objResponse;
         }
     }
@@ -2011,7 +2011,7 @@ function AddBan($nickname, $type, $steam, $ip, $length, $dfile, $dname, $reason,
         $objResponse->addScript("ShowKickBox('".((int)$type==0?$steam:$ip)."', '".(int)$type."');");
     } else {
         $objResponse->addScript(
-            "ShowBox('Ban Added', 'The ban has been successfully added', 'green', 'index.php?p=admin&c=bans');"
+            "ShowBox('" . Lang::js('adm.ban_added') . "', '" . Lang::js('adm.ban_added_msg') . "', 'green', 'index.php?p=admin&c=bans');"
         );
     }
 
@@ -2230,7 +2230,7 @@ function AddMod($name, $folder, $icon, $steam_universe, $enabled)
     );
     if(!empty($check)) {
         $objResponse->addScript(
-            "ShowBox('Error adding mod', 'A mod using that folder or name already exists.', 'red');"
+            "ShowBox('Error adding mod', '" . Lang::js('adm.mod_exists') . "', 'red');"
         );
         return $objResponse;
     }
@@ -2241,7 +2241,7 @@ function AddMod($name, $folder, $icon, $steam_universe, $enabled)
     $GLOBALS['db']->Execute($pre, array($name, $icon, $folder, $steam_universe, $enabled));
 
     $objResponse->addScript(
-        "ShowBox('Mod Added', 'The game mod has been successfully added', 'green', 'index.php?p=admin&c=mods');"
+        "ShowBox('Mod Added', '" . Lang::js('adm.mod_added') . "', 'green', 'index.php?p=admin&c=mods');"
     );
     $objResponse->addScript("TabToReload();");
     Log::add("m", "Mod Added", "Mod ($name) has been added.");
@@ -2281,7 +2281,7 @@ function EditAdminPerms($aid, $web_flags, $srv_flags)
     $email = $GLOBALS['userbank']->GetProperty('email', $aid);
     if($web_flags > 0 && (empty($password) || empty($email))) {
         $objResponse->addScript(
-            "ShowBox('Error', 'Admins have to have a password and email set in order to get web permissions.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=" . $aid . "\" title=\"Edit Admin Details\">Set the details</a> first and try again.', 'red', '');"
+            "ShowBox('" . Lang::js('box.error') . "', 'Admins have to have a password and email set in order to get web permissions.<br /><a href=\"index.php?p=admin&c=admins&o=editdetails&id=" . $aid . "\" title=\"Edit Admin Details\">Set the details</a> first and try again.', 'red', '');"
         );
         return $objResponse;
     }
@@ -2323,7 +2323,7 @@ function EditAdminPerms($aid, $web_flags, $srv_flags)
         );
     } else {
         $objResponse->addScript(
-            "ShowBox('Permissions updated', 'The user`s permissions have been updated successfully', 'green', 'index.php?p=admin&c=admins');TabToReload();"
+            "ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('adm.perm_updated') . "', 'green', 'index.php?p=admin&c=admins');TabToReload();"
         );
     }
     $admname = $GLOBALS['db']->GetRow("SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = ?", array((int)$aid));
@@ -2411,7 +2411,7 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
                     array($override['name'], $override['type'], $gid, $id));
                 if (!empty($chk)) {
                     $objResponse->addScript(
-                        "ShowBox('Error', 'There already is an override with name \\\"" . htmlspecialchars(addslashes($override['name'])) . "\\\" from the selected type..', 'red', '', true);"
+                        "ShowBox('" . Lang::js('box.error') . "', 'There already is an override with name \\\"" . htmlspecialchars(addslashes($override['name'])) . "\\\" from the selected type..', 'red', '', true);"
                     );
                     return $objResponse;
                 }
@@ -2437,7 +2437,7 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
                 );
                 if (!empty($chk)) {
                     $objResponse->addScript(
-                        "ShowBox('Error', 'There already is an override with name \\\"" . htmlspecialchars(addslashes($newOverride['name'])) . "\\\" from the selected type..', 'red', '', true);"
+                        "ShowBox('" . Lang::js('box.error') . "', 'There already is an override with name \\\"" . htmlspecialchars(addslashes($newOverride['name'])) . "\\\" from the selected type..', 'red', '', true);"
                     );
                     return $objResponse;
                 }
@@ -2464,7 +2464,7 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
             );
         } else {
             $objResponse->addScript(
-                "ShowBox('Group updated', 'The group has been updated successfully', 'green', 'index.php?p=admin&c=groups');TabToReload();"
+                "ShowBox('Group updated', '" . Lang::js('adm.group_updated') . "', 'green', 'index.php?p=admin&c=groups');TabToReload();"
             );
         }
         Log::add("m", "Group Updated", "Group ($name) has been updated.");
@@ -2472,7 +2472,7 @@ function EditGroup($gid, $web_flags, $srv_flags, $type, $name, $overrides, $newO
     }
 
     $objResponse->addScript(
-        "ShowBox('Group updated', 'The group has been updated successfully', 'green', 'index.php?p=admin&c=groups');TabToReload();"
+        "ShowBox('Group updated', '" . Lang::js('adm.group_updated') . "', 'green', 'index.php?p=admin&c=groups');TabToReload();"
     );
     Log::add("m", "Group Updated", "Group ($name) has been updated.");
     return $objResponse;
@@ -2568,7 +2568,7 @@ function SendMail($subject, $message, $type, $id)
 
     if(empty($email)) {
         $objResponse->addScript(
-            "ShowBox('Error', 'There is no email to send to supplied.', 'red', 'index.php?p=admin&c=bans');"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('mail.no_recipient') . "', 'red', 'index.php?p=admin&c=bans');"
         );
         return $objResponse;
     }
@@ -2584,7 +2584,7 @@ function SendMail($subject, $message, $type, $id)
 
     if($isEmailSent) {
         $objResponse->addScript(
-            "ShowBox('Email Sent', 'The email has been sent to the user.', 'green', 'index.php?p=admin&c=bans');"
+            "ShowBox('Email Sent', '" . Lang::js('mail.sent') . "', 'green', 'index.php?p=admin&c=bans');"
         );
         Log::add("m",
             "Email Sent",
@@ -2592,7 +2592,7 @@ function SendMail($subject, $message, $type, $id)
         );
     }
     else {
-        $objResponse->addScript("ShowBox('Error', 'Failed to send the email to the user.', 'red', '');");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('mail.send_failed') . "', 'red', '');");
     }
 
     return $objResponse;
@@ -2749,7 +2749,7 @@ function AddComment($bid, $ctype, $ctext, $page)
     } elseif($ctype=="P") {
         $redir = "?p=admin&c=bans#^1";
     } else {
-        $objResponse->addScript("ShowBox('Error', 'Bad comment type.', 'red');");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('cmt.bad_type') . "', 'red');");
         return $objResponse;
     }
 
@@ -2766,7 +2766,7 @@ function AddComment($bid, $ctype, $ctext, $page)
     );
 
     $objResponse->addScript(
-        "ShowBox('Comment Added', 'The comment has been successfully published', 'green', 'index.php$redir');"
+        "ShowBox('Comment Added', '" . Lang::js('cmt.added') . "', 'green', 'index.php$redir');"
     );
     $objResponse->addScript("TabToReload();");
     Log::add("m", "Comment Added", "$username added a comment for ban #$bid");
@@ -2800,7 +2800,7 @@ function EditComment($cid, $ctype, $ctext, $page)
     } elseif($ctype=="P") {
         $redir = "?p=admin&c=bans#^1";
     } else {
-        $objResponse->addScript("ShowBox('Error', 'Bad comment type.', 'red');");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('cmt.bad_type') . "', 'red');");
         return $objResponse;
     }
 
@@ -2816,7 +2816,7 @@ function EditComment($cid, $ctype, $ctext, $page)
     );
 
     $objResponse->addScript(
-        "ShowBox('Comment Edited', 'The comment #".$cid." has been successfully edited', 'green', 'index.php$redir');"
+        "ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('cmt.edited', ['cid' => $cid]) . "', 'green', 'index.php$redir');"
     );
     $objResponse->addScript("TabToReload();");
     Log::add("m", "Comment Edited", "$username edited comment #$cid");
@@ -2854,13 +2854,13 @@ function RemoveComment($cid, $ctype, $page)
     }
     if($res) {
         $objResponse->addScript(
-            "ShowBox('Comment Deleted', 'The selected comment has been deleted from the database', 'green', 'index.php$redir', true);"
+            "ShowBox('Comment Deleted', '" . Lang::js('cmt.deleted') . "', 'green', 'index.php$redir', true);"
         );
         Log::add("m", "Comment Deleted", "$username deleted comment #$cid");
     }
     else {
         $objResponse->addScript(
-            "ShowBox('Error', 'There was a problem deleting the comment from the database. Check the logs for more info', 'red', 'index.php$redir', true);"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('cmt.delete_failed') . "', 'red', 'index.php$redir', true);"
         );
     }
     return $objResponse;
@@ -2979,11 +2979,11 @@ function GroupBan($groupuri, $isgrpurl="no", $queue="no", $reason="", $last="")
 
     if ($queue=="yes") {
         $objResponse->addScript(
-            "ShowBox('Please Wait...', 'Banning all members of the selected groups... <br>Please Wait...<br>Notice: This can last 15mins or longer, depending on the amount of members of the groups!', 'info', '', true);"
+            "ShowBox('" . Lang::js('box.wait') . "', 'Banning all members of the selected groups... <br>Please Wait...<br>Notice: This can last 15mins or longer, depending on the amount of members of the groups!', 'info', '', true);"
         );
     } else {
         $objResponse->addScript(
-            "ShowBox('Please Wait...', 'Banning all members of " . $grpname . "...<br>Please Wait...<br>Notice: This can last 15mins or longer, depending on the amount of members of the group!', 'info', '', true);"
+            "ShowBox('" . Lang::js('box.wait') . "', 'Banning all members of " . $grpname . "...<br>Please Wait...<br>Notice: This can last 15mins or longer, depending on the amount of members of the group!', 'info', '', true);"
         );
     }
     $objResponse->addScript("$('dialog-control').setStyle('display', 'none');");
@@ -3090,13 +3090,13 @@ function BanMemberOfGroup($grpurl, $queue, $reason, $last)
             "<p>Banned " . ($amount['total'] - $amount['before'] - $amount['failed']) . "/" . $amount['total'] . " players of group '" . $grpurl . "'. | " . $amount['before'] . " were banned already. | " . $amount['failed'] . " failed.</p>");
         if ($grpurl==$last) {
             $objResponse->addScript(
-                "ShowBox('Groups banned successfully', 'The selected Groups were banned successfully. For detailed info check below.', 'green', '', true);"
+                "ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('gb.done_groups') . "', 'green', '', true);"
             );
             $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
         }
     } else {
         $objResponse->addScript(
-            "ShowBox('Group banned successfully', 'Banned ".($amount['total'] - $amount['before'] - $amount['failed'])."/".$amount['total']." players of group \'".$grpurl."\'.<br>".$amount['before']." were banned already.<br>".$amount['failed']." failed.', 'green', '', true);"
+            "ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('gb.done_group', ['done' => $amount['total'] - $amount['before'] - $amount['failed'], 'total' => $amount['total'], 'group' => $grpurl, 'before' => $amount['before'], 'failed' => $amount['failed']]) . "', 'green', '', true);"
         );
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
     }
@@ -3189,7 +3189,7 @@ function GetGroups($friendid)
         }
     } else {
         $objResponse->addScript(
-            "ShowBox('Error', 'There was an error retrieving the group data. <br>Maybe the player isn\'t member of any group or his profile is private?<br><a href=\"http://steamcommunity.com/profiles/" . $friendid . "/\" title=\"Community profile\" target=\"_blank\">Community profile</a>', 'red', 'index.php?p=banlist', true);"
+            "ShowBox('" . Lang::js('box.error') . "', 'There was an error retrieving the group data. <br>Maybe the player isn\'t member of any group or his profile is private?<br><a href=\"http://steamcommunity.com/profiles/" . $friendid . "/\" title=\"Community profile\" target=\"_blank\">Community profile</a>', 'red', 'index.php?p=banlist', true);"
         );
         $objResponse->addScript("$('steamGroupsText').innerHTML = '<i>No groups...</i>';");
         return $objResponse;
@@ -3224,7 +3224,7 @@ function BanFriends($friendid, $name)
 
     if (is_null($friends)) {
         $objResponse->addScript(
-            "ShowBox('Error private profile', 'There was an error retrieving the friend list.', 'red', 'index.php?p=banlist', true);"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('gb.private') . "', 'red', 'index.php?p=banlist', true);"
         );
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
         return $objResponse;
@@ -3267,14 +3267,14 @@ function BanFriends($friendid, $name)
 
     if ($total === 0) {
         $objResponse->addScript(
-            "ShowBox('Error retrieving friends', 'There was an error retrieving the friend list. Check if the profile isn\'t private or if he hasn\'t got any friends!', 'red', 'index.php?p=banlist', true);"
+            "ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('gb.friends_failed') . "', 'red', 'index.php?p=banlist', true);"
         );
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
         return $objResponse;
     }
 
     $objResponse->addScript(
-        "ShowBox('Friends banned successfully', 'Banned ".($total-$before-$error)."/".$total." friends of \'".$name."\'.<br>".$before." were banned already.<br>".$error." failed.', 'green', 'index.php?p=banlist', true);"
+        "ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('gb.done_friends', ['done' => $total-$before-$error, 'total' => $total, 'name' => addslashes($name), 'before' => $before, 'error' => $error]) . "', 'green', 'index.php?p=banlist', true);"
     );
     $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
     Log::add("m",
@@ -3298,7 +3298,7 @@ function ViewCommunityProfile(int $sid, $name)
 
     if (!$ret) {
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-        $objResponse->addScript("ShowBox('Error', 'Can\' connect to server!', 'red', '', true);");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', 'Can\' connect to server!', 'red', '', true);");
         return $objResponse;
     }
 
@@ -3315,7 +3315,7 @@ function ViewCommunityProfile(int $sid, $name)
     }
 
     $objResponse->addScript(
-        "ShowBox('Error', 'Can\'t get playerinfo for ".addslashes(htmlspecialchars($name)).". Player not on the server anymore!', 'red', '', true);"
+        "ShowBox('" . Lang::js('box.error') . "', 'Can\'t get playerinfo for ".addslashes(htmlspecialchars($name)).". Player not on the server anymore!', 'red', '', true);"
     );
     return $objResponse;
 }
@@ -3342,7 +3342,7 @@ function SendMessage(int $sid, $name, $message)
 
     if (!$ret) {
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-        $objResponse->addScript("ShowBox('Error', 'Can\' connect to server!', 'red', '', true);");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', 'Can\' connect to server!', 'red', '', true);");
         return $objResponse;
     }
 
@@ -3357,7 +3357,7 @@ function SendMessage(int $sid, $name, $message)
 
     Log::add("m", "Message sent to player", "The following message was sent to $name on server (#$sid): $message");
     $objResponse->addScript(
-        "ShowBox('Message Sent', 'The message has been sent to player \'".addslashes(htmlspecialchars($name))."\' successfully!', 'green', '', true);$('dialog-control').setStyle('display', 'block');"
+        "ShowBox('" . Lang::js('box.success') . "', '" . Lang::js('ply.msg_sent', ['name' => addslashes(htmlspecialchars($name))]) . "', 'green', '', true);$('dialog-control').setStyle('display', 'block');"
     );
     return $objResponse;
 }
@@ -3439,7 +3439,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
     );
 
     if (intval($chk[0]) > 0) {
-        $objResponse->addScript("ShowBox('Error', 'SteamID: $steam is already blocked.', 'red', '');");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', 'SteamID: $steam is already blocked.', 'red', '');");
         return $objResponse;
     }
 
@@ -3448,7 +3448,7 @@ function AddBlock($nickname, $type, $steam, $length, $reason)
     foreach ($admchk as $admin) {
         if ($admin['authid'] == $steam && $userbank->GetProperty('srv_immunity') < $admin['srv_immunity']) {
             $objResponse->addScript(
-                "ShowBox('Error', 'SteamID: Admin ".$admin['user']." ($steam) is immune.', 'red', '');"
+                "ShowBox('" . Lang::js('box.error') . "', 'SteamID: Admin ".$admin['user']." ($steam) is immune.', 'red', '');"
             );
             return $objResponse;
         }
@@ -3574,7 +3574,7 @@ function PasteBlock(int $sid, $name)
 
     if (!$ret) {
         $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
-        $objResponse->addScript("ShowBox('Error', 'Can\'t connect to server!', 'red', '', true);");
+        $objResponse->addScript("ShowBox('" . Lang::js('box.error') . "', '" . Lang::js('ply.connect_failed') . "', 'red', '', true);");
         return $objResponse;
     }
 
@@ -3593,7 +3593,7 @@ function PasteBlock(int $sid, $name)
     }
 
     $objResponse->addScript(
-        "ShowBox('Error', 'Can\'t get player info for ".addslashes(htmlspecialchars($name)).". Player is not on the server (".$data['ip'].":".$data['port'].") anymore!', 'red', '', true);"
+        "ShowBox('" . Lang::js('box.error') . "', 'Can\'t get player info for ".addslashes(htmlspecialchars($name)).". Player is not on the server (".$data['ip'].":".$data['port'].") anymore!', 'red', '', true);"
     );
     $objResponse->addScript("$('dialog-control').setStyle('display', 'block');");
     return $objResponse;

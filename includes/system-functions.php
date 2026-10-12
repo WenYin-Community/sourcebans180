@@ -137,11 +137,18 @@ function CheckAdminAccess($mask)
 function SecondsToString($sec, $textual=true)
 {
     if ($sec < 0) {
-        return 'Session';
+        return Lang::get('time.session');
     }
     if ($textual) {
         $div = array( 2592000, 604800, 86400, 3600, 60, 1 );
-        $desc = array('mo','wk','d','hr','min','sec');
+        $desc = array(
+            Lang::get('time.unit.mo'),
+            Lang::get('time.unit.wk'),
+            Lang::get('time.unit.d'),
+            Lang::get('time.unit.hr'),
+            Lang::get('time.unit.min'),
+            Lang::get('time.unit.sec')
+        );
         $ret = null;
         foreach ($div as $index => $value) {
             $quotent = floor($sec / $value); //greatest whole integer
@@ -158,6 +165,70 @@ function SecondsToString($sec, $textual=true)
         $secs = $sec % 60;
         return "$hours:$mins:$secs";
     }
+}
+
+/**
+ * 将数据库中存储的英文封禁理由映射为当前语言显示
+ *
+ * 数据库中的 reason 字段保存的是英文原文（如 "Aimbot"、"Inappropriate Language"），
+ * 此处按语言包键 reason.<slug> 做映射；未收录的理由原样返回，避免信息丢失。
+ *
+ * @param  string $reason 数据库中的英文理由
+ * @return string         当前语言下的理由文本
+ */
+function LocalizeReason($reason)
+{
+    if (!is_string($reason) || $reason === '') {
+        return $reason;
+    }
+
+    static $map = null;
+    if ($map === null) {
+        // 英文原文（小写） => 语言包键
+        $map = [
+            'aimbot'                    => 'reason.aimbot',
+            'anti recoil'               => 'reason.antirecoil',
+            'antirecoil'                => 'reason.antirecoil',
+            'wallhack'                  => 'reason.wallhack',
+            'spinhack'                  => 'reason.spinhack',
+            'speedhack'                 => 'reason.speedhack',
+            'multi-hack'                => 'reason.multihack',
+            'multihack'                 => 'reason.multihack',
+            'no smoke'                  => 'reason.nosmoke',
+            'no flash'                  => 'reason.noflash',
+            'hacking'                   => 'reason.hacking',
+            'general exploit of game/map/server' => 'reason.exploit',
+            'team killing'              => 'reason.tk',
+            'team flashing'             => 'reason.tf',
+            'spamming mic/chat'         => 'reason.commspam',
+            'inappropriate spray'       => 'reason.badspray',
+            'inappropriate language'    => 'reason.badlang',
+            'inappropriate name'        => 'reason.badname',
+            'ignoring admins'           => 'reason.ignoreadmin',
+            'team stacking'             => 'reason.stacking',
+            'obscene language'          => 'reason.obscene',
+            'insult players'            => 'reason.insult',
+            'admin disrespect'          => 'reason.admin_disrespect',
+            'spam'                      => 'reason.spam',
+            'spam in chat/voice'        => 'reason.spam',
+            'trading'                   => 'reason.trading',
+            'other'                     => 'reason.other',
+            'advertisement'             => 'reason.advertisement',
+            'played music in voice'     => 'reason.music',
+            'music in voice'            => 'reason.music',
+            'gagged through basecomm natives' => 'reason.gagged_basecomm',
+            'muted through basecomm natives'   => 'reason.muted_basecomm',
+            'gagged through basecomm natives' => 'reason.gagged_basecomm',
+            'muted through basecomm natives'   => 'reason.muted_basecomm',
+        ];
+    }
+
+    $key = strtolower(trim($reason));
+    if (isset($map[$key])) {
+        return Lang::get($map[$key]);
+    }
+
+    return $reason;
 }
 
 /**

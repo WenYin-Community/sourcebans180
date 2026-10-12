@@ -1,106 +1,86 @@
 {
     "SM_RESERVED_SLOT": {
         "value": "a",
-        "display": "Reserved Slot"
+        "display": "保留通道"
     },
-
     "SM_GENERIC": {
         "value": "b",
-        "display": "Generic Admin"
+        "display": "通用管理"
     },
-
     "SM_KICK": {
         "value": "c",
-        "display": "Kick"
+        "display": "踢出"
     },
-
     "SM_BAN": {
         "value": "d",
-        "display": "Ban"
+        "display": "封禁"
     },
-
     "SM_UNBAN": {
         "value": "e",
-        "display": "Unban"
+        "display": "解封"
     },
-
     "SM_SLAY": {
         "value": "f",
-        "display": "Slay"
+        "display": "处死"
     },
-
     "SM_MAP": {
         "value": "g",
-        "display": "Map Change"
+        "display": "更换地图"
     },
-
     "SM_CVAR": {
         "value": "h",
-        "display": "Change ConVars"
+        "display": "修改 ConVar"
     },
-
     "SM_CONFIG": {
         "value": "i",
-        "display": "Run Configs"
+        "display": "执行配置文件"
     },
-
     "SM_CHAT": {
         "value": "j",
-        "display": "Admin Chat"
+        "display": "管理员聊天"
     },
-
     "SM_VOTE": {
         "value": "k",
-        "display": "Start Votes"
+        "display": "发起投票"
     },
-
     "SM_PASSWORD": {
         "value": "l",
-        "display": "Password Server"
+        "display": "服务器加密码"
     },
-
     "SM_RCON": {
         "value": "m",
-        "display": "RCON"
+        "display": "执行 RCON 命令"
     },
-
     "SM_CHEATS": {
         "value": "n",
-        "display": "Enable Cheats"
+        "display": "启用作弊"
     },
-
     "SM_ROOT": {
         "value": "z",
-        "display": "Full Admin"
+        "display": "完全管理员"
     },
-
     "SM_CUSTOM1": {
         "value": "o",
-        "display": "Custom Flag 1"
+        "display": "自定义标志位 1"
     },
-
     "SM_CUSTOM2": {
         "value": "p",
-        "display": "Custom Flag 2"
+        "display": "自定义标志位 2"
     },
-
     "SM_CUSTOM3": {
         "value": "q",
-        "display": "Custom Flag 3"
+        "display": "自定义标志位 3"
     },
-
     "SM_CUSTOM4": {
         "value": "r",
-        "display": "Custom flag 4"
+        "display": "自定义标志位 4"
     },
-
     "SM_CUSTOM5": {
         "value": "s",
-        "display": "Custom Flag 5"
+        "display": "自定义标志位 5"
     },
-
     "SM_CUSTOM6": {
         "value": "t",
-        "display": "Custom Flag 6"
+        "display": "自定义标志位 6"
     }
 }

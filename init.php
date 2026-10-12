@@ -79,7 +79,6 @@ require_once(INCLUDES_PATH.'/security/Crypto.php');
 require_once(INCLUDES_PATH.'/auth/JWT.php');
 
 require_once(INCLUDES_PATH.'/auth/handler/NormalAuthHandler.php');
-require_once(INCLUDES_PATH.'/auth/handler/SteamAuthHandler.php');
 
 require_once(INCLUDES_PATH.'/auth/Auth.php');
 require_once(INCLUDES_PATH.'/auth/Host.php');
@@ -205,6 +204,13 @@ $theme->registerPlugin(Smarty::PLUGIN_FUNCTION, 'sb_button', 'smarty_function_sb
 $theme->registerPlugin(Smarty::PLUGIN_FUNCTION, 'load_template', 'smarty_function_load_template');
 $theme->registerPlugin('modifier', 'smarty_stripslashes', 'smarty_stripslashes');
 $theme->registerPlugin('modifier', 'smarty_htmlspecialchars', 'smarty_htmlspecialchars');
+
+// ---------------------------------------------------
+// 国际化（i18n）——必须在 session_start() 之后、页面渲染之前
+// ---------------------------------------------------
+require_once(INCLUDES_PATH.'/i18n/Lang.php');
+Lang::init();
+Lang::registerSmarty($theme);
 
 if ((isset($_GET['debug']) && $_GET['debug'] == 1) || DEBUG_MODE) {
     $theme->force_compile = true;

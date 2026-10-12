@@ -1,161 +1,130 @@
 {
     "ADMIN_LIST_ADMINS": {
         "value": 1,
-        "display": "View Admins"
+        "display": "查看管理员"
     },
-
     "ADMIN_ADD_ADMINS": {
         "value": 2,
-        "display": "Add Admins"
+        "display": "添加管理员"
     },
-
     "ADMIN_EDIT_ADMINS": {
         "value": 4,
-        "display": "Edit Admins"
+        "display": "编辑管理员"
     },
-
     "ADMIN_DELETE_ADMINS": {
         "value": 8,
-        "display": "Delete Admins"
+        "display": "删除管理员"
     },
-
     "ADMIN_LIST_SERVERS": {
         "value": 16,
-        "display": "View Servers"
+        "display": "查看服务器"
     },
-
     "ADMIN_ADD_SERVER": {
         "value": 32,
-        "display": "Add Servers"
+        "display": "添加服务器"
     },
-
     "ADMIN_EDIT_SERVERS": {
         "value": 64,
-        "display": "Edit Servers"
+        "display": "编辑服务器"
     },
-
     "ADMIN_DELETE_SERVERS": {
         "value": 128,
-        "display": "Delete Servers"
+        "display": "删除服务器"
     },
-
     "ADMIN_ADD_BAN": {
         "value": 256,
-        "display": "Add Bans"
+        "display": "添加封禁"
     },
-
     "ADMIN_EDIT_OWN_BANS": {
         "value": 1024,
-        "display": "Edit Own Bans"
+        "display": "编辑自己的封禁"
     },
-
     "ADMIN_EDIT_GROUP_BANS": {
         "value": 2048,
-        "display": "Edit Group Bans"
+        "display": "编辑用户组的封禁"
     },
-
     "ADMIN_EDIT_ALL_BANS": {
         "value": 4096,
-        "display": "Edit All Bans"
+        "display": "编辑所有封禁"
     },
-
     "ADMIN_BAN_PROTESTS": {
         "value": 8192,
-        "display": "Ban Appeals"
+        "display": "封禁申诉"
     },
-
     "ADMIN_BAN_SUBMISSIONS": {
         "value": 16384,
-        "display": "Ban Reports"
+        "display": "封禁举报"
     },
-
     "ADMIN_DELETE_BAN": {
         "value": 33554432,
-        "display": "Delete All Bans"
+        "display": "删除所有封禁"
     },
-
     "ADMIN_UNBAN": {
         "value": 67108864,
-        "display": "Unban All Bans"
+        "display": "解除所有封禁"
     },
-
     "ADMIN_BAN_IMPORT": {
         "value": 134217728,
-        "display": "Import Bans"
+        "display": "导入封禁"
     },
-
     "ADMIN_UNBAN_OWN_BANS": {
         "value": 1073741824,
-        "display": "Unban Own Bans"
+        "display": "解除自己的封禁"
     },
-
     "ADMIN_UNBAN_GROUP_BANS": {
         "value": 2147483648,
-        "display": "Unban Group Bans"
+        "display": "解除用户组的封禁"
     },
-
     "ADMIN_LIST_GROUPS": {
         "value": 32768,
-        "display": "View Groups"
+        "display": "查看用户组"
     },
-
     "ADMIN_ADD_GROUP": {
         "value": 65536,
-        "display": "Add Groups"
+        "display": "添加用户组"
     },
-
     "ADMIN_EDIT_GROUPS": {
         "value": 131072,
-        "display": "Edit Groups"
+        "display": "编辑用户组"
     },
-
     "ADMIN_DELETE_GROUPS": {
         "value": 262144,
-        "display": "Delete Groups"
+        "display": "删除用户组"
     },
-
     "ADMIN_WEB_SETTINGS": {
         "value": 524288,
-        "display": "Web Settings"
+        "display": "网页设置"
     },
-
     "ADMIN_LIST_MODS": {
         "value": 1048576,
-        "display": "View Mods"
+        "display": "查看模组"
     },
-
     "ADMIN_ADD_MODS": {
         "value": 2097152,
-        "display": "Add Mods"
+        "display": "添加模组"
     },
-
     "ADMIN_EDIT_MODS": {
         "value": 4194304,
-        "display": "Edit Mods"
+        "display": "编辑模组"
     },
-
     "ADMIN_DELETE_MODS": {
         "value": 8388608,
-        "display": "Delete Mods"
+        "display": "删除模组"
     },
-
     "ADMIN_NOTIFY_SUB": {
         "value": 268435456,
-        "display": "Ban Report Email Notifications"
+        "display": "封禁举报邮件通知"
     },
-
     "ADMIN_NOTIFY_PROTEST": {
         "value": 536870912,
-        "display": "Ban Appeal Email Notifications"
+        "display": "封禁申诉邮件通知"
     },
-
     "ADMIN_OWNER": {
         "value": 16777216,
-        "display": "Owner"
+        "display": "所有者"
     },
-
     "ALL_WEB": {
         "value": 4294966783,
-        "display": "All Web Permissions"
+        "display": "所有网页权限"
     }
 }
