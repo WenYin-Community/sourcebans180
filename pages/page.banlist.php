@@ -489,9 +489,9 @@ while (!$res->EOF) {
     if (Config::getBool('banlist.hideadminname') && !$userbank->is_admin()) {
         $data['admin'] = false;
     } else {
-        $data['admin'] = stripslashes($res->fields['admin_name']);
+        $data['admin'] = stripslashes($res->fields['admin_name'] ?? '');
     }
-    $data['reason']     = LocalizeReason(stripslashes($res->fields['ban_reason']));
+    $data['reason']     = LocalizeReason(stripslashes($res->fields['ban_reason'] ?? ''));
     $data['ban_length'] = $res->fields['ban_length'] == 0 ? Lang::get('time.permanent') : SecondsToString(intval($res->fields['ban_length']));
 
     // Custom "listtable_1_banned" & "listtable_1_permanent" addition entries
