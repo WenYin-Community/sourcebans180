@@ -118,6 +118,46 @@ index.php → init.php（引导：输入过滤→常量→config.php→autoload�
 - 有效网页权限 `extraflags = admins.extraflags | sb_groups.flags`（经 `gid` LEFT JOIN）
 - 有效服务器权限 `srv_flags = admins.srv_flags . sb_srvgroups.flags`（经 `srv_group = sg.name` JOIN）
 
+### 授权链路（三条线全景）
+
+前两条线决定「有什么权限」，第三条线（`sb_admins_servers_groups`）决定「在哪几台服生效」：
+
+```mermaid
+flowchart LR
+    subgraph 权限定义
+        WG["网页管理组<br/>sb_groups.type=1<br/>flags: 整数位掩码"]
+        SAG["服务器管理组<br/>sb_srvgroups<br/>flags: 字母串 + immunity"]
+        SRVG["服务器组<br/>sb_groups.type=3<br/>flags 恒 0（无权限）"]
+    end
+
+    ADM["sb_admins<br/>gid / extraflags<br/>srv_group / srv_flags"]
+    ASG["sb_admins_servers_groups<br/>srv_group_id | server_id"]
+    SVR["sb_servers"]
+
+    WG -->|"gid + extraflags"| ADM
+    SAG -->|"srv_group（组名）+ srv_flags"| ADM
+    ADM --> ASG
+    ASG -->|"srv_group_id"| SRVG
+    ASG -->|"server_id"| SVR
+    SRVG -->|"sb_servers_groups"| SVR
+```
+
+- **服务器管理组 ≠ 生效范围**：它只定义「有哪些游戏内权限」，还必须在「服务器访问」里勾选服务器组或单台服务器
+  （写 `sb_admins_servers_groups`），否则该服上根本查不到这个管理员。
+- **服务器组不携带权限**：只是服务器打包，在「服务器编辑页」勾选所属组（写 `sb_servers_groups`）。
+  `EditGroup` 对 `type=server` 虽会更新 `sb_groups.flags`，但页面不渲染权限框、前端固定提交 `0`，故恒为 0。
+- **网页管理组与服务器权限完全独立**：光有网页组不等于游戏内有权限；两组可同时挂在一个账号上。
+
+### 设置流程（实操）
+
+1. 组管理 → 添加用户组，选类型（`type` 1 网页管理组 / 2 服务器管理组 / 3 服务器组）。
+2. 编辑管理员 →「组」标签页：选网页管理组（写 `admins.gid`）+ 服务器管理组（写 `admins.srv_group`）
+   —— `pages/admin.edit.admingroup.php`。
+3. 编辑管理员 →「服务器访问」标签页：勾服务器组或单台服务器（写 `admins_servers_groups`）
+   —— `pages/admin.edit.adminservers.php`。
+4. 可选：编辑管理员 → 权限页做个人覆盖（`extraflags` / `srv_flags`）—— `includes/sb-callback.php:2270 EditAdminPerms()`。
+   新增管理员时选「自定义权限」则 `gid=-1`、`srv_group=''`，权限只落在个人列上。
+
 ### 两个判定，别用错
 
 | 方法 | 含义 | 用途 |
@@ -168,6 +208,9 @@ UPDATE `sb_admins` SET `gid` = 0, `extraflags` = 256, `srv_group` = '服务器�
   若日后要给「自定义权限」账号开面板，需引入一个专用权限位（bit 9 / `512` 是当前唯一空闲位）。
 - 登录 `includes/auth/handler/NormalAuthHandler.php` **只校验用户名 + 密码**，不要求网页权限，
   因此"无网页权限"的服务器管理组照样能登录。
+- `sb_groups.type` 一字段两义：`1` = 网页管理组、`3` = 服务器组；**`type=2` 不落在 `sb_groups`**（服务器管理组在 `sb_srvgroups`）。
+- `admins.srv_group` 存的是服务器管理组**名字**而非 id；重命名组时 `EditGroup` 会级联更新 `admins.srv_group`
+  （`includes/sb-callback.php:2391`），手改库或绕过回调改名会导致权限断链。
 
 ## 统一认证（SSO，可选）
 
